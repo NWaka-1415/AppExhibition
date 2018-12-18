@@ -29,6 +29,7 @@ public class OverAllManager : MonoBehaviour
     //Buttons
     [SerializeField] private Button _firstSelectButtonOnSetting; //最初に選択されているボタン in Setting
     [SerializeField] private Button _firstSelectButtonOnAdd; //最初に選択されているボタン in Add
+    [SerializeField] private Button _firstSelectButtonOnDelete; //最初に選択されているボタン in Delete
 
     //Animators
     [SerializeField] private Animator _gameCategoryAnimator; //ゲームカテゴリBackGroundのコンポーネント＜アニメーター＞
@@ -119,7 +120,7 @@ public class OverAllManager : MonoBehaviour
 
         _openDialogFlag = false;
 
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < Enum.GetNames(typeof(GameCategory)).Length; i++)
         {
             SetDropDownMenu(i);
         }
@@ -221,15 +222,16 @@ public class OverAllManager : MonoBehaviour
 
         Vector2 dPad = new Vector2(Input.GetAxisRaw("Horizontal_DPad"), Input.GetAxisRaw("Vertical_DPad"));
 
+        Navigation nav = EventSystem.current.currentSelectedGameObject.GetComponent<Selectable>().navigation;
         if (Input.GetButtonDown("Up") || (dPad.y > 0 && Mathf.Abs(_prevDPad.y - dPad.y) > 0))
         {
             Debug.Log("<color=red>Axis Horizontal:" + dPad.y + "</color>");
-            EventSystem.current.currentSelectedGameObject.GetComponent<Selectable>().navigation.selectOnUp.Select();
+            if (nav.selectOnUp != null) nav.selectOnUp.Select();
         }
         else if (Input.GetButtonDown("Down") || dPad.y < 0 && Mathf.Abs(_prevDPad.y - dPad.y) > 0)
         {
             Debug.Log("<color=red>Axis Horizontal:" + dPad.y + "</color>");
-            EventSystem.current.currentSelectedGameObject.GetComponent<Selectable>().navigation.selectOnDown.Select();
+            if (nav.selectOnDown != null) nav.selectOnDown.Select();
         }
 
         _prevDPad = dPad;
@@ -250,6 +252,9 @@ public class OverAllManager : MonoBehaviour
                 gameCategory = GameCategory.Music;
                 break;
             case 3:
+                gameCategory = GameCategory.Application;
+                break;
+            case 4:
                 gameCategory = GameCategory.Others;
                 break;
             default:
@@ -274,13 +279,17 @@ public class OverAllManager : MonoBehaviour
         {
             case MenuTypes.Add:
                 _addAppPanel.SetActive(false);
+                _deleteAppPanel.SetActive(false);
+                _home.SetActive(false);
                 _settingsPanel.SetActive(true);
                 _firstSelectButtonOnSetting.Select();
                 _menuType = MenuTypes.Settings;
                 ClearAddAppInfo();
                 break;
             case MenuTypes.Delete:
+                _home.SetActive(false);
                 _deleteAppPanel.SetActive(false);
+                _addAppPanel.SetActive(false);
                 _settingsPanel.SetActive(true);
                 _firstSelectButtonOnSetting.Select();
                 _menuType = MenuTypes.Settings;
@@ -293,6 +302,8 @@ public class OverAllManager : MonoBehaviour
 
                 _appWindowsManager.Initialize();
                 _settingsPanel.SetActive(false);
+                _addAppPanel.SetActive(false);
+                _deleteAppPanel.SetActive(false);
                 _home.SetActive(true);
                 _menuType = MenuTypes.Home;
                 break;
@@ -307,7 +318,7 @@ public class OverAllManager : MonoBehaviour
         _setFileName = "";
         _setImageFileName = "";
         _setGameTitle = "";
-        _setGameCategory = GameCategory.Others;
+        _setGameCategory = GameCategory.Action;
         _fileSelectButtonText.GetComponent<Text>().text = "ゲームのexeファイルを選択してください";
         _imageFileSelectButtonText.GetComponent<Text>().text = "ゲームアイコンのpngファイルを選択してください";
         _titleNameEnter.GetComponent<InputField>().text = "";
@@ -382,6 +393,7 @@ public class OverAllManager : MonoBehaviour
 
     public void MoveToDeleteApp()
     {
+        _firstSelectButtonOnDelete.Select();
         _settingsPanel.SetActive(false);
         _deleteAppPanel.SetActive(true);
         _menuType = MenuTypes.Delete;
@@ -398,7 +410,6 @@ public class OverAllManager : MonoBehaviour
             return;
         }
 
-        _menuType = MenuTypes.Settings;
         _apps.Add(new App(_setGameTitle, _setFileName, _setImageFileName, _setGameCategory));
 
         //作成したデータの保存
@@ -514,7 +525,34 @@ public class OverAllManager : MonoBehaviour
     public void OnValueChanged(int result)
     {
         //DropDownの値の変化時
-        _setGameCategory = (GameCategory) result;
+        switch (result)
+        {
+            case 0:
+                _setGameCategory = GameCategory.Action;
+                break;
+            case 1:
+                _setGameCategory = GameCategory.Shooting;
+                break;
+            case 2:
+                _setGameCategory = GameCategory.Music;
+                break;
+            case 3:
+                _setGameCategory = GameCategory.Application;
+                break;
+            case 4:
+                _setGameCategory = GameCategory.Others;
+                break;
+            default:
+                _setGameCategory = GameCategory.Action;
+                break;
+        }
+    }
+
+    public void DeleteApplication()
+    {
+        _apps = new List<App>();
+        SaveApplication();
+        BackTo();
     }
 
     public void AnimationGameCategory()
@@ -547,8 +585,8 @@ public class OverAllManager : MonoBehaviour
         Action = 0,
         Shooting = 1,
         Music = 2,
-        Others = 3,
-        Application = 4
+        Application = 4,
+        Others = 3
     }
 
     public enum State
