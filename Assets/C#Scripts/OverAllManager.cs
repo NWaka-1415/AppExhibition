@@ -160,17 +160,57 @@ public class OverAllManager : MonoBehaviour
         }
         else if (Input.GetButtonDown("Fire1"))
         {
+            Debug.Log("Pressed Fire1");
             //RB
-            if (_menuType == MenuTypes.Home) _selectingGameCategory = ChangeSelectingGameCategory(1);
+            if (_menuType == MenuTypes.Home) _selectingGameCategory = ChangeSelectingGameCategory(-1);
         }
         else if (Input.GetButtonDown("Fire2"))
         {
+            Debug.Log("Pressed Fire2");
             //LB
-            if (_menuType == MenuTypes.Home) _selectingGameCategory = ChangeSelectingGameCategory(-1);
+            if (_menuType == MenuTypes.Home) _selectingGameCategory = ChangeSelectingGameCategory(1);
         }
         else if (Input.GetButtonDown("Menu"))
         {
             if (_menuType == MenuTypes.Home) _menuType = MenuTypes.Menu;
+        }
+
+        if (_menuType == MenuTypes.Home)
+        {
+            if (_selectingGameCategory != _previousSelectingGameCategory)
+            {
+                _previousSelectingGameCategory = _selectingGameCategory;
+
+                _appWindowsManager.ResetAppInstants(); //既存のパネルを消し
+
+                //情報を新たに追加しなおし
+                if (_selectingGameCategory == -1)
+                {
+                    //All
+                    foreach (App app in _apps)
+                    {
+                        CreateAppWindow(app);
+                    }
+                }
+                else
+                {
+                    foreach (App app in _apps)
+                    {
+                        if ((GameCategory) _selectingGameCategory == app.GameCategory)
+                        {
+                            CreateAppWindow(app);
+                        }
+                    }
+                }
+
+                AnimationGameCategory(); //選択中のゲームカテゴリの変更アニメーションをしつつ
+
+                _appWindowsManager.Initialize(); //パネルを初期化
+
+                _selectingGameCategoryObject.GetComponent<Text>().text = _selectingGameCategory != -1
+                    ? ((GameCategory) _selectingGameCategory).ToString()
+                    : "All";
+            }
         }
 
         /*
@@ -178,38 +218,6 @@ public class OverAllManager : MonoBehaviour
          */
         if (_menuType == MenuTypes.Home) return; //Homeであれば処理を終了
 
-        if (_selectingGameCategory != _previousSelectingGameCategory)
-        {
-            _appWindowsManager.ResetAppInstants(); //既存のパネルを消し
-
-            //情報を新たに追加しなおし
-            if (_selectingGameCategory != -1)
-            {
-                foreach (App app in _apps)
-                {
-                    CreateAppWindow(app);
-                }
-            }
-            else
-            {
-                foreach (App app in _apps)
-                {
-                    if ((GameCategory) _selectingGameCategory == app.GameCategory)
-                    {
-                        CreateAppWindow(app);
-                    }
-                }
-            }
-
-            AnimationGameCategory(); //選択中のゲームカテゴリの変更アニメーションをしつつ
-
-            _appWindowsManager.Initialize(); //パネルを初期化
-
-            _selectingGameCategoryObject.GetComponent<Text>().text = _selectingGameCategory != -1
-                ? ((GameCategory) _selectingGameCategory).ToString()
-                : "All";
-            _previousSelectingGameCategory = _selectingGameCategory;
-        }
 
         Vector2 dPad = new Vector2(Input.GetAxisRaw("Horizontal_DPad"), Input.GetAxisRaw("Vertical_DPad"));
 

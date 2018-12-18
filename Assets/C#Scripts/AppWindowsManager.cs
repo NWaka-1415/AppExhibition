@@ -121,8 +121,8 @@ public class AppWindowsManager : MonoBehaviour
             _appWidowInstants[i].GetComponent<ApplicationWindow>().State = OverAllManager.State.Unselect;
             _appWidowInstants[i].GetComponent<ApplicationWindow>().MoveWindow(
                 DefaultPos + new Vector2(SelectBetweenUnselectRight + UnselectBetweenUnselect * (i - 1), 0f));
-            Debug.Log(_appWidowInstants[i].transform.localPosition.x + "=" + DefaultPos.x + "+" +
-                      SelectBetweenUnselectRight + "+" + UnselectBetweenUnselect + "*" + (i - 1));
+            //Debug.Log(_appWidowInstants[i].transform.localPosition.x + "=" + DefaultPos.x + "+" +
+                      //SelectBetweenUnselectRight + "+" + UnselectBetweenUnselect + "*" + (i - 1));
         }
     }
 
@@ -138,14 +138,14 @@ public class AppWindowsManager : MonoBehaviour
 
     void MoveAppWindow()
     {
-        Debug.Log("SelectNumber:" + _selectedNumber);
+        //Debug.Log("SelectNumber:" + _selectedNumber);
         _appWidowInstants[_selectedNumber].GetComponent<ApplicationWindow>().MoveWindow(DefaultPos);
         for (int i = 0; i < _selectedNumber; i++)
         {
             //選択状態パネルの左側
             _appWidowInstants[i].GetComponent<ApplicationWindow>().MoveWindow(
                 DefaultPos - new Vector2(UnselectBetweenUnselect * (i + 1), 0f));
-            Debug.Log(_appWidowInstants[i].transform.localPosition);
+            //Debug.Log(_appWidowInstants[i].transform.localPosition);
         }
 
         int j = 0;
@@ -154,7 +154,7 @@ public class AppWindowsManager : MonoBehaviour
             //選択状態パネルの右側
             _appWidowInstants[i].GetComponent<ApplicationWindow>().MoveWindow(
                 DefaultPos + new Vector2(SelectBetweenUnselectRight + UnselectBetweenUnselect * j, 0f));
-            Debug.Log("後半,i=" + i + "LocalPos:" + _appWidowInstants[i].transform.localPosition);
+            //Debug.Log("後半,i=" + i + "LocalPos:" + _appWidowInstants[i].transform.localPosition);
             j++;
         }
     }
