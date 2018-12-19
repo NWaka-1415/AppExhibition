@@ -243,8 +243,7 @@ public class OverAllManager : MonoBehaviour
 
     void SetDropDownMenu(int value)
     {
-        GameCategory gameCategory;
-        gameCategory = ExchangeGameCategoryFromInt(value);
+        GameCategory gameCategory = ExchangeGameCategoryFromInt(value);
         _gameCategoryDropdown.GetComponent<Dropdown>().options[value].text = gameCategory.ToString();
     }
 
