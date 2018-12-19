@@ -197,7 +197,7 @@ public class OverAllManager : MonoBehaviour
                 {
                     foreach (App app in _apps)
                     {
-                        if ((GameCategory) _selectingGameCategory == app.GameCategory)
+                        if (ExchangeGameCategoryFromInt(_selectingGameCategory) == app.GameCategory)
                         {
                             CreateAppWindow(app);
                         }
@@ -206,10 +206,10 @@ public class OverAllManager : MonoBehaviour
 
                 AnimationGameCategory(); //選択中のゲームカテゴリの変更アニメーションをしつつ
 
-                _appWindowsManager.Initialize(); //パネルを初期化
+                _appWindowsManager.Initialize(); //ウィンドウパネルを初期化
 
                 _selectingGameCategoryObject.GetComponent<Text>().text = _selectingGameCategory != -1
-                    ? ((GameCategory) _selectingGameCategory).ToString()
+                    ? ExchangeGameCategoryFromInt(_selectingGameCategory).ToString()
                     : "All";
             }
         }
@@ -222,17 +222,21 @@ public class OverAllManager : MonoBehaviour
 
         Vector2 dPad = new Vector2(Input.GetAxisRaw("Horizontal_DPad"), Input.GetAxisRaw("Vertical_DPad"));
 
-        Navigation nav = EventSystem.current.currentSelectedGameObject.GetComponent<Selectable>().navigation;
-        if (Input.GetButtonDown("Up") || (dPad.y > 0 && Mathf.Abs(_prevDPad.y - dPad.y) > 0))
+        if (EventSystem.current.currentSelectedGameObject != null)
         {
-            Debug.Log("<color=red>Axis Horizontal:" + dPad.y + "</color>");
-            if (nav.selectOnUp != null) nav.selectOnUp.Select();
+            Navigation nav = EventSystem.current.currentSelectedGameObject.GetComponent<Selectable>().navigation;
+            if (Input.GetButtonDown("Up") || (dPad.y > 0 && Mathf.Abs(_prevDPad.y - dPad.y) > 0))
+            {
+                Debug.Log("<color=red>Axis Horizontal:" + dPad.y + "</color>");
+                if (nav.selectOnUp != null) nav.selectOnUp.Select();
+            }
+            else if (Input.GetButtonDown("Down") || dPad.y < 0 && Mathf.Abs(_prevDPad.y - dPad.y) > 0)
+            {
+                Debug.Log("<color=red>Axis Horizontal:" + dPad.y + "</color>");
+                if (nav.selectOnDown != null) nav.selectOnDown.Select();
+            }
         }
-        else if (Input.GetButtonDown("Down") || dPad.y < 0 && Mathf.Abs(_prevDPad.y - dPad.y) > 0)
-        {
-            Debug.Log("<color=red>Axis Horizontal:" + dPad.y + "</color>");
-            if (nav.selectOnDown != null) nav.selectOnDown.Select();
-        }
+
 
         _prevDPad = dPad;
     }
@@ -323,6 +327,7 @@ public class OverAllManager : MonoBehaviour
         _imageFileSelectButtonText.GetComponent<Text>().text = "ゲームアイコンのpngファイルを選択してください";
         _titleNameEnter.GetComponent<InputField>().text = "";
         //DropDownのやつも元に戻すこと
+        _gameCategoryDropdown.GetComponent<Dropdown>().value = 0;
     }
 
     int ChangeSelectingGameCategory(int change)
@@ -355,7 +360,8 @@ public class OverAllManager : MonoBehaviour
 
         for (int i = 0; i < gameNames.Length; i++)
         {
-            _apps.Add(new App(gameNames[i], gameFileNames[i], gameImageFileNames[i], (GameCategory) gameCategories[i]));
+            _apps.Add(new App(gameNames[i], gameFileNames[i], gameImageFileNames[i],
+                ExchangeGameCategoryFromInt(gameCategories[i])));
         }
     }
 
@@ -410,6 +416,8 @@ public class OverAllManager : MonoBehaviour
             return;
         }
 
+        //ゲームカテゴリをセット
+        _setGameCategory = ExchangeGameCategoryFromInt(_gameCategoryDropdown.GetComponent<Dropdown>().value);
         _apps.Add(new App(_setGameTitle, _setFileName, _setImageFileName, _setGameCategory));
 
         //作成したデータの保存
@@ -522,29 +530,31 @@ public class OverAllManager : MonoBehaviour
         _setGameTitle = result;
     }
 
-    public void OnValueChanged(int result)
+/*
+ * 未使用
+    public void OnValueChanged(Dropdown dropdown)
     {
+        Debug.Log("Result:" + dropdown.value);
         //DropDownの値の変化時
-        switch (result)
+        _setGameCategory = ExchangeGameCategoryFromInt(dropdown.value);
+    }
+*/
+    public GameCategory ExchangeGameCategoryFromInt(int gameCategory)
+    {
+        switch (gameCategory)
         {
             case 0:
-                _setGameCategory = GameCategory.Action;
-                break;
+                return GameCategory.Action;
             case 1:
-                _setGameCategory = GameCategory.Shooting;
-                break;
+                return GameCategory.Shooting;
             case 2:
-                _setGameCategory = GameCategory.Music;
-                break;
+                return GameCategory.Music;
             case 3:
-                _setGameCategory = GameCategory.Application;
-                break;
+                return GameCategory.Application;
             case 4:
-                _setGameCategory = GameCategory.Others;
-                break;
+                return GameCategory.Others;
             default:
-                _setGameCategory = GameCategory.Action;
-                break;
+                return GameCategory.Action;
         }
     }
 
