@@ -241,32 +241,11 @@ public class OverAllManager : MonoBehaviour
         _prevDPad = dPad;
     }
 
-    void SetDropDownMenu(int i)
+    void SetDropDownMenu(int value)
     {
         GameCategory gameCategory;
-        switch (i)
-        {
-            case 0:
-                gameCategory = GameCategory.Action;
-                break;
-            case 1:
-                gameCategory = GameCategory.Shooting;
-                break;
-            case 2:
-                gameCategory = GameCategory.Music;
-                break;
-            case 3:
-                gameCategory = GameCategory.Application;
-                break;
-            case 4:
-                gameCategory = GameCategory.Others;
-                break;
-            default:
-                gameCategory = GameCategory.Others;
-                break;
-        }
-
-        _gameCategoryDropdown.GetComponent<Dropdown>().options[i].text = gameCategory.ToString();
+        gameCategory = ExchangeGameCategoryFromInt(value);
+        _gameCategoryDropdown.GetComponent<Dropdown>().options[value].text = gameCategory.ToString();
     }
 
     void CreateAppWindow(App app)
