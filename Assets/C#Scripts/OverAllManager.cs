@@ -186,6 +186,9 @@ public class OverAllManager : MonoBehaviour
 
         if (_menuType == MenuTypes.Home)
         {
+            /*
+             * カテゴリー別タイトル入れ替え
+             */
             if (_selectingGameCategory != _previousSelectingGameCategory)
             {
                 _previousSelectingGameCategory = _selectingGameCategory;
@@ -265,9 +268,14 @@ public class OverAllManager : MonoBehaviour
 
     void MenuChange()
     {
+        //メニューの開閉を行う
         _isMenuOpen = !_isMenuOpen;
         _menu.SetActive(_isMenuOpen);
         _menu.GetComponent<Animator>().SetBool("isMenuOpen", _isMenuOpen);
+        if (!_isMenuOpen) return;
+        //メニューが開かれたら
+        Button deleteButtonComp = _menu.transform.Find("DeleteButton").GetComponent<Button>();
+        deleteButtonComp.Select();
     }
 
     void BackTo()
