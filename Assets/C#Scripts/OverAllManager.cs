@@ -129,7 +129,6 @@ public class OverAllManager : MonoBehaviour
 
         _isMenuOpen = false;
         _settingsPanel.SetActive(false);
-        _menu.SetActive(_isMenuOpen);
 
         _setFileName = "";
         _setGameTitle = "";
@@ -270,12 +269,18 @@ public class OverAllManager : MonoBehaviour
     {
         //メニューの開閉を行う
         _isMenuOpen = !_isMenuOpen;
-        _menu.SetActive(_isMenuOpen);
         _menu.GetComponent<Animator>().SetBool("isMenuOpen", _isMenuOpen);
-        if (!_isMenuOpen) return;
-        //メニューが開かれたら
-        Button deleteButtonComp = _menu.transform.Find("DeleteButton").GetComponent<Button>();
-        deleteButtonComp.Select();
+        if (_isMenuOpen)
+        {
+            //メニューが開かれたら
+            Button deleteButtonComp = _menu.transform.Find("DeleteButton").GetComponent<Button>();
+            deleteButtonComp.Select();
+        }
+        else
+        {
+            //メニューが閉じたらボタンのフォーカスをオフ
+            EventSystem.current.SetSelectedGameObject(null);
+        }
     }
 
     void BackTo()

@@ -3484,6 +3484,7 @@ MonoBehaviour:
   _selectingGameCategoryObject: {fileID: 952804185}
   _backGround: {fileID: 233217559}
   _home: {fileID: 1958032740}
+  _menu: {fileID: 6637772}
   _settingsPanel: {fileID: 853490053}
   _addAppPanel: {fileID: 1998508753}
   _deleteAppPanel: {fileID: 92149333}
