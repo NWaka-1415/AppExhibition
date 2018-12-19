@@ -18,6 +18,7 @@ public class OverAllManager : MonoBehaviour
     [SerializeField] private GameObject _selectingGameCategoryObject; //選択中のゲームカテゴリを表示するテキストオブジェクト
     [SerializeField] private GameObject _backGround; //バックグラウンドオブジェクト（ただの背景）
     [SerializeField] private GameObject _home; //Home画面のオブジェクトをまとめるからのオブジェクト
+    [SerializeField] private GameObject _menu; //Home画面で表示されるメニューオブジェクト
     [SerializeField] private GameObject _settingsPanel; //Settings画面のパネル
     [SerializeField] private GameObject _addAppPanel; //Add画面のパネル
     [SerializeField] private GameObject _deleteAppPanel; //Delete画面のパネル
@@ -57,6 +58,7 @@ public class OverAllManager : MonoBehaviour
     private Vector2 _prevDPad;
 
     private bool _openDialogFlag; //Dialogを開いていたらTrue おそらくもう不要
+    private bool _isMenuOpen;
 
     private int _selectingGameCategory; //選ばれているゲームカテゴリ
     private int _previousSelectingGameCategory; //前フレームで選ばれていたゲームカテゴリ
@@ -125,7 +127,9 @@ public class OverAllManager : MonoBehaviour
             SetDropDownMenu(i);
         }
 
+        _isMenuOpen = false;
         _settingsPanel.SetActive(false);
+        _menu.SetActive(_isMenuOpen);
 
         _setFileName = "";
         _setGameTitle = "";
@@ -173,7 +177,11 @@ public class OverAllManager : MonoBehaviour
         }
         else if (Input.GetButtonDown("Menu"))
         {
-            if (_menuType == MenuTypes.Home) _menuType = MenuTypes.Menu;
+            if (_menuType == MenuTypes.Home)
+            {
+                _menuType = MenuTypes.Menu;
+                MenuChange(); //Open
+            }
         }
 
         if (_menuType == MenuTypes.Home)
@@ -255,6 +263,13 @@ public class OverAllManager : MonoBehaviour
         _appWindowsManager.AppWidowInstants = instantiateApplication;
     }
 
+    void MenuChange()
+    {
+        _isMenuOpen = !_isMenuOpen;
+        _menu.SetActive(_isMenuOpen);
+        _menu.GetComponent<Animator>().SetBool("isMenuOpen", _isMenuOpen);
+    }
+
     void BackTo()
     {
         switch (_menuType)
@@ -291,6 +306,7 @@ public class OverAllManager : MonoBehaviour
                 break;
             case MenuTypes.Menu:
                 _menuType = MenuTypes.Home;
+                MenuChange();
                 break;
         }
     }
