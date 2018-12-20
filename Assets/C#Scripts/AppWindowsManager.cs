@@ -14,12 +14,15 @@ public class AppWindowsManager : MonoBehaviour
     private const float UnselectBetweenUnselect = 92.5f;
     private bool _isInit = false;
 
+    private bool _isExecute;
+
     private Vector2 _prevDPad = new Vector2(0f, 0f);
 
     // Update is called once per frame
     void Update()
     {
         if (OverAllManager.MenuType != OverAllManager.MenuTypes.Home) return;
+        //Homeじゃなければ処理終了
         if (_appWidowInstants.Count == 0) return;
 
         if (_appWidowInstants[_selectedNumber].GetComponent<ApplicationWindow>().GameCategory != _previousGameCategory)
@@ -31,10 +34,18 @@ public class AppWindowsManager : MonoBehaviour
         //アプリが起動したときの動作
         if (_appWidowInstants[_selectedNumber].GetComponent<ApplicationWindow>().ExecuteFlag)
         {
+            _isExecute = true;
             //背景OFF
             GetComponent<OverAllManager>().BackGround.SetActive(false);
             //ゲームタイトルOFF
             GetComponent<OverAllManager>().GameTitleObject.GetComponent<Text>().enabled = false;
+            //ゲームカテゴリOFF
+            GetComponent<OverAllManager>().SelectingGameCategoryObject.SetActive(false);
+            for (int i = 0; i < 2; i++)
+            {
+                GetComponent<OverAllManager>().SetImageAlpha(i, 0f);
+            }
+
             foreach (GameObject appWidowInstant in _appWidowInstants)
             {
                 if (!appWidowInstant.GetComponent<ApplicationWindow>().ExecuteFlag)
@@ -46,10 +57,18 @@ public class AppWindowsManager : MonoBehaviour
         }
         else
         {
+            _isExecute = false;
             //背景ON
             GetComponent<OverAllManager>().BackGround.SetActive(true);
             //ゲームタイトルON
             GetComponent<OverAllManager>().GameTitleObject.GetComponent<Text>().enabled = true;
+            //ゲームカテゴリON
+            GetComponent<OverAllManager>().SelectingGameCategoryObject.SetActive(true);
+            for (int i = 0; i < 2; i++)
+            {
+                GetComponent<OverAllManager>().SetImageAlpha(i, 255f);
+            }
+
             foreach (GameObject appWidowInstant in _appWidowInstants)
             {
                 appWidowInstant.GetComponent<ApplicationWindow>().AppImage.GetComponent<Image>().color =
@@ -57,6 +76,7 @@ public class AppWindowsManager : MonoBehaviour
             }
         }
 
+        if (_isExecute) return;
         Vector2 dPad = new Vector2(Input.GetAxisRaw("Horizontal_DPad"), Input.GetAxisRaw("Vertical_DPad"));
 
         if (Input.GetButtonDown("Left") || (dPad.x < 0 && Mathf.Abs(_prevDPad.x - dPad.x) > 0))

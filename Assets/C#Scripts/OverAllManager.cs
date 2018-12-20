@@ -577,6 +577,16 @@ public class OverAllManager : MonoBehaviour
         _gameCategoryAnimator.SetTrigger("Anim");
     }
 
+    public void SetImageAlpha(int number, float alpha)
+    {
+        _gameCategoryIcons[number].color = new Color(255f, 255f, 255f, alpha);
+    }
+
+    public GameObject SelectingGameCategoryObject
+    {
+        get { return _selectingGameCategoryObject; }
+    }
+
     public GameObject BackGround
     {
         get { return _backGround; }
