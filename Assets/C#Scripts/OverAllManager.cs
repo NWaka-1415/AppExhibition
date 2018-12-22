@@ -321,6 +321,9 @@ public class OverAllManager : MonoBehaviour
                 _menuType = MenuTypes.Home;
                 MenuChange();
                 break;
+            case MenuTypes.IndividualDelete:
+                _menuType = MenuTypes.Home;
+                break;
         }
     }
 
@@ -410,6 +413,12 @@ public class OverAllManager : MonoBehaviour
         _settingsPanel.SetActive(false);
         _deleteAppPanel.SetActive(true);
         _menuType = MenuTypes.Delete;
+    }
+
+    public void OpenDeleteWindow()
+    {
+        //
+        _menuType = MenuTypes.IndividualDelete;
     }
 
     public void CreateApplication()
@@ -628,6 +637,7 @@ public class OverAllManager : MonoBehaviour
         Settings,
         Add,
         Delete,
-        Menu
+        Menu,
+        IndividualDelete
     }
 }
