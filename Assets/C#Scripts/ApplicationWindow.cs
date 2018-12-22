@@ -80,7 +80,7 @@ public class ApplicationWindow : MonoBehaviour
     public void MoveWindow(Vector2 vector2)
     {
         transform.localPosition = vector2;
-        DebugLogPosition();
+        //DebugLogPosition();
     }
 
     public void Execute()
