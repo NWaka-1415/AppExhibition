@@ -247,6 +247,16 @@ public class OverAllManager : MonoBehaviour
                 Debug.Log("<color=red>Axis Horizontal:" + dPad.y + "</color>");
                 if (nav.selectOnDown != null) nav.selectOnDown.Select();
             }
+            else if (dPad.x < 0 && Mathf.Abs(_prevDPad.x - dPad.x) > 0)
+            {
+                //Left
+                if (nav.selectOnLeft != null) nav.selectOnLeft.Select();
+            }
+            else if (dPad.x > 0 && Mathf.Abs(_prevDPad.x - dPad.x) > 0)
+            {
+                //Right
+                if (nav.selectOnRight != null) nav.selectOnRight.Select();
+            }
         }
 
 
