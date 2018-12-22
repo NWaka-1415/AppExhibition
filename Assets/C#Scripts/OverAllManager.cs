@@ -22,6 +22,7 @@ public class OverAllManager : MonoBehaviour
     [SerializeField] private GameObject _settingsPanel; //Settings画面のパネル
     [SerializeField] private GameObject _addAppPanel; //Add画面のパネル
     [SerializeField] private GameObject _deleteAppPanel; //Delete画面のパネル
+    [SerializeField] private GameObject _dialogPanel; //Dialog画面のパネル
     [SerializeField] private GameObject _fileSelectButtonText; //アプリケーションファイル選択ダイアログオープンボタンオブジェクト in Add
     [SerializeField] private GameObject _imageFileSelectButtonText; //イメージファイル選択ダイアログオープンボタンオブジェクト in Add
     [SerializeField] private GameObject _titleNameEnter; //ゲームタイトルインプットフィールドオブジェクト in Add
@@ -31,6 +32,7 @@ public class OverAllManager : MonoBehaviour
     [SerializeField] private Button _firstSelectButtonOnSetting; //最初に選択されているボタン in Setting
     [SerializeField] private Button _firstSelectButtonOnAdd; //最初に選択されているボタン in Add
     [SerializeField] private Button _firstSelectButtonOnDelete; //最初に選択されているボタン in Delete
+    [SerializeField] private Button _firstSelectButtonOnDialog; //最初に選択されているボタン in Dialog
 
     //Animators
     [SerializeField] private Animator _gameCategoryAnimator; //ゲームカテゴリBackGroundのコンポーネント＜アニメーター＞
@@ -157,7 +159,7 @@ public class OverAllManager : MonoBehaviour
             {
                 _home.SetActive(false);
                 _settingsPanel.SetActive(true);
-                _appWindowsManager.ResetAppInstants();
+                //_appWindowsManager.ResetAppInstants();
                 _firstSelectButtonOnSetting.Select();
                 _menuType = MenuTypes.Settings;
             }
@@ -305,6 +307,7 @@ public class OverAllManager : MonoBehaviour
                 _menuType = MenuTypes.Settings;
                 break;
             case MenuTypes.Settings:
+                _appWindowsManager.ResetAppInstants();
                 foreach (App app in _apps)
                 {
                     CreateAppWindow(app);
@@ -322,6 +325,9 @@ public class OverAllManager : MonoBehaviour
                 MenuChange();
                 break;
             case MenuTypes.IndividualDelete:
+                _menu.SetActive(true);
+                _home.SetActive(true);
+                _dialogPanel.SetActive(false);
                 _menuType = MenuTypes.Home;
                 break;
         }
@@ -415,10 +421,56 @@ public class OverAllManager : MonoBehaviour
         _menuType = MenuTypes.Delete;
     }
 
-    public void OpenDeleteWindow()
+    public void OpenDialogWindow()
     {
-        //
-        _menuType = MenuTypes.IndividualDelete;
+        //Dialogを開く
+        //以前の画面に応じてDialogの種類を決定
+        switch (_menuType)
+        {
+            case MenuTypes.Menu:
+                //Menuから移ってくる場合はアプリ単体削除Dialog
+                MenuChange();
+                _menu.SetActive(false);
+                _home.SetActive(false);
+                _dialogPanel.SetActive(true);
+                _menuType = MenuTypes.IndividualDelete;
+                break;
+            default:
+                break;
+        }
+
+        _firstSelectButtonOnDialog.Select();
+    }
+
+    public void OnClickedDialogOkButton()
+    {
+        //Dialog画面のOKボタンがクリックされた際の挙動
+        switch (_menuType)
+        {
+            case MenuTypes.IndividualDelete:
+                //選択中のアプリを削除
+                _apps.RemoveAt(_appWindowsManager.GetSelectAppNumber());
+                SaveApplication();
+                _appWindowsManager.ResetAppInstants();
+                foreach (App app in _apps)
+                {
+                    CreateAppWindow(app);
+                }
+
+                _appWindowsManager.Initialize();
+                _home.SetActive(true);
+                _dialogPanel.SetActive(false);
+                _menuType = MenuTypes.Home;
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void OnClickedDialogCancelButton()
+    {
+        //キャンセルによって，前の画面に戻るだけ
+        BackTo();
     }
 
     public void CreateApplication()

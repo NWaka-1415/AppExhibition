@@ -194,4 +194,9 @@ public class AppWindowsManager : MonoBehaviour
             ? ""
             : " " + _appWidowInstants[_selectedNumber].GetComponent<ApplicationWindow>().GameName;
     }
+
+    public int GetSelectAppNumber()
+    {
+        return _selectedNumber;
+    }
 }
