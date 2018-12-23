@@ -335,6 +335,13 @@ public class OverAllManager : MonoBehaviour
                 MenuChange();
                 break;
             case MenuTypes.IndividualDelete:
+                _appWindowsManager.ResetAppInstants();
+                foreach (App app in _apps)
+                {
+                    CreateAppWindow(app);
+                }
+
+                _appWindowsManager.Initialize();
                 _menu.SetActive(true);
                 _home.SetActive(true);
                 _dialogPanel.SetActive(false);
@@ -439,7 +446,7 @@ public class OverAllManager : MonoBehaviour
         {
             case MenuTypes.Menu:
                 //Menuから移ってくる場合はアプリ単体削除Dialog
-                MenuChange();
+                MenuChange(); //isOpenをfalseに
                 _menu.SetActive(false);
                 _home.SetActive(false);
                 _dialogPanel.SetActive(true);
@@ -468,6 +475,7 @@ public class OverAllManager : MonoBehaviour
                 }
 
                 _appWindowsManager.Initialize();
+                _menu.SetActive(true);
                 _home.SetActive(true);
                 _dialogPanel.SetActive(false);
                 _menuType = MenuTypes.Home;
