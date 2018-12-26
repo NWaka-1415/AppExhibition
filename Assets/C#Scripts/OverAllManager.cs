@@ -42,6 +42,7 @@ public class OverAllManager : MonoBehaviour
 
     //Images
     [SerializeField] private Image[] _gameCategoryIcons; //ゲームカテゴリのアイコンオブジェクトのコンポーネントs＜Image＞
+    [SerializeField] private Image _dialogIcon; //ダイアログ画面上のゲームアイコンオブジェクトにコンポーネント＜Image＞
 
     private AppWindowsManager _appWindowsManager;
 
@@ -449,6 +450,9 @@ public class OverAllManager : MonoBehaviour
                 MenuChange(); //isOpenをfalseに
                 _menu.SetActive(false);
                 _home.SetActive(false);
+                _dialogIcon.color = new Color(255f, 255f, 255f, 255f); //アプリ単体削除ダイアログの場合はゲームのアイコンを表示
+                _dialogIcon.sprite =
+                    SpriteEditor.SpriteFromFile(_appWindowsManager.GetSelectAppImageFileName());
                 _dialogPanel.SetActive(true);
                 _menuType = MenuTypes.IndividualDelete;
                 break;

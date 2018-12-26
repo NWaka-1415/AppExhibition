@@ -199,4 +199,17 @@ public class AppWindowsManager : MonoBehaviour
     {
         return _selectedNumber;
     }
+
+    public string GetSelectAppImageFileName()
+    {
+        //選択中のアプリケーションのイメージファイル名を返す
+        if (_appWidowInstants.Count == 0) return "";
+        foreach (GameObject appWidowInstant in _appWidowInstants)
+        {
+            if (appWidowInstant.GetComponent<ApplicationWindow>().State == OverAllManager.State.Select)
+                return appWidowInstant.GetComponent<ApplicationWindow>().GameImage;
+        }
+
+        return "";
+    }
 }

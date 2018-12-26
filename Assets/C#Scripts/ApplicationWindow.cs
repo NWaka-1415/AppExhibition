@@ -126,6 +126,11 @@ public class ApplicationWindow : MonoBehaviour
         get { return _gameName; }
     }
 
+    public string GameImage
+    {
+        get { return _gameImage; }
+    }
+
     public OverAllManager.GameCategory GameCategory
     {
         get { return _gameCategory; }

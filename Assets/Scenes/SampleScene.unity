@@ -4080,6 +4080,7 @@ MonoBehaviour:
   _gameCategoryIcons:
   - {fileID: 298536311}
   - {fileID: 1216329794}
+  _dialogIcon: {fileID: 772057443}
 --- !u!4 &1716700518
 Transform:
   m_ObjectHideFlags: 0
