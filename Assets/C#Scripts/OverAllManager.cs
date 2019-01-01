@@ -648,6 +648,25 @@ public class OverAllManager : MonoBehaviour
         }
     }
 
+    public int ExchangeIntFromGameCategory(GameCategory gameCategory)
+    {
+        switch (gameCategory)
+        {
+            case GameCategory.Action:
+                return 0;
+            case GameCategory.Shooting:
+                return 1;
+            case GameCategory.Music:
+                return 2;
+            case GameCategory.Application:
+                return 3;
+            case GameCategory.Others:
+                return 4;
+            default:
+                return 0;
+        }
+    }
+
     public void DeleteApplication()
     {
         _apps = new List<App>();
@@ -658,6 +677,11 @@ public class OverAllManager : MonoBehaviour
     public void AnimationGameCategory()
     {
         _gameCategoryAnimator.SetTrigger("Anim");
+    }
+
+    public void SetCategoryIcon(int number, GameCategory gameCategory)
+    {
+        _gameCategoryIcons[number].sprite = _gameCategoryIconSprites[0];
     }
 
     public void SetImageAlpha(int number, float alpha)
@@ -692,11 +716,11 @@ public class OverAllManager : MonoBehaviour
 
     public enum GameCategory
     {
-        Action = 0,
-        Shooting = 1,
-        Music = 2,
-        Application = 4,
-        Others = 3
+        Action,
+        Shooting,
+        Music,
+        Application,
+        Others
     }
 
     public enum State
