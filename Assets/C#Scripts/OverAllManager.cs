@@ -139,6 +139,8 @@ public class OverAllManager : MonoBehaviour
 
         _selectingGameCategory = -1;
         _previousSelectingGameCategory = _selectingGameCategory;
+
+        SetCategoryIcon(1, _selectingGameCategory);
     }
 
     private void Update()
@@ -197,12 +199,17 @@ public class OverAllManager : MonoBehaviour
 
                 _appWindowsManager.ResetAppInstants(); //既存のパネルを消し
 
+                SetCategoryIcon(1, _selectingGameCategory);
+
+                int count = 0; //アプリ数キャッシュ
+
                 //情報を新たに追加しなおし
                 if (_selectingGameCategory == -1)
                 {
                     //All
                     foreach (App app in _apps)
                     {
+                        count++;
                         CreateAppWindow(app);
                     }
                 }
@@ -212,10 +219,13 @@ public class OverAllManager : MonoBehaviour
                     {
                         if (ExchangeGameCategoryFromInt(_selectingGameCategory) == app.GameCategory)
                         {
+                            count++;
                             CreateAppWindow(app);
                         }
                     }
                 }
+
+                _gameCategoryIcons[0].color = count == 0 ? new Color(255f, 255f, 255f, 0f) : new Color(255f, 255f, 255f, 255f);
 
                 AnimationGameCategory(); //選択中のゲームカテゴリの変更アニメーションをしつつ
 
@@ -679,9 +689,10 @@ public class OverAllManager : MonoBehaviour
         _gameCategoryAnimator.SetTrigger("Anim");
     }
 
-    public void SetCategoryIcon(int number, GameCategory gameCategory)
+    public void SetCategoryIcon(int number, int gameCategory)
     {
-        _gameCategoryIcons[number].sprite = _gameCategoryIconSprites[0];
+        if (gameCategory == -1) gameCategory = 5;
+        _gameCategoryIcons[number].sprite = _gameCategoryIconSprites[gameCategory];
     }
 
     public void SetImageAlpha(int number, float alpha)

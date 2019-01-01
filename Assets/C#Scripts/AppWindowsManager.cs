@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class AppWindowsManager : MonoBehaviour
 {
     //アプリウィンドウオブジェクトを管理するクラス
+    [SerializeField] private OverAllManager _overAllManager;
     private List<GameObject> _appWidowInstants;
     private int _selectedNumber;
     private int _previousSelectNumber;
@@ -29,6 +30,7 @@ public class AppWindowsManager : MonoBehaviour
         {
             //ゲームカテゴリの表示を変更(未完，本来はアイコンも変更)
             _previousGameCategory = _appWidowInstants[_selectedNumber].GetComponent<ApplicationWindow>().GameCategory;
+            _overAllManager.SetCategoryIcon(0, _overAllManager.ExchangeIntFromGameCategory(_previousGameCategory));
         }
 
         //アプリが起動したときの動作
@@ -134,6 +136,7 @@ public class AppWindowsManager : MonoBehaviour
 
         _previousGameCategory =
             _appWidowInstants[_selectedNumber].GetComponent<ApplicationWindow>().GameCategory;
+        _overAllManager.SetCategoryIcon(0, _overAllManager.ExchangeIntFromGameCategory(_previousGameCategory));
 
         for (int i = 1; i < _appWidowInstants.Count; i++)
         {

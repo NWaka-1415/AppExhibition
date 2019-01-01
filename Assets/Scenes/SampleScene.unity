@@ -4082,6 +4082,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: ee95d7d2d2bc2cf4dbd66beaf2f83944, type: 3}
   - {fileID: 21300000, guid: f2f2c5472848d3542bff91ba40e3f6b7, type: 3}
   - {fileID: 21300000, guid: b9823d16e45b3704cb64627e59f798c7, type: 3}
+  - {fileID: 21300000, guid: 3674c99a9fa8b054a99a55eb0241e685, type: 3}
   _gameCategoryIcons:
   - {fileID: 298536311}
   - {fileID: 1216329794}
@@ -4112,6 +4113,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c10cbfb0ce20af4cb95a911f0d123ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _overAllManager: {fileID: 1716700517}
 --- !u!1 &1834401370
 GameObject:
   m_ObjectHideFlags: 0
