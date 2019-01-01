@@ -85,6 +85,7 @@ public class ApplicationWindow : MonoBehaviour
 
     public void Execute()
     {
+        if (_executeFlag) return;
         _proc = new Process();
         _proc.StartInfo.FileName = _exeFileName;
         _proc.EnableRaisingEvents = true;

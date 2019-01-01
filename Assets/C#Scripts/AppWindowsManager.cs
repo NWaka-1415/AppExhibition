@@ -191,6 +191,11 @@ public class AppWindowsManager : MonoBehaviour
         set { _appWidowInstants.Add(value); }
     }
 
+    public bool IsExecute
+    {
+        get { return _isExecute; }
+    }
+
     public string GetSelectAppTitle()
     {
         return _appWidowInstants.Count == 0

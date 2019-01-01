@@ -145,6 +145,8 @@ public class OverAllManager : MonoBehaviour
 
     private void Update()
     {
+        if (_appWindowsManager.IsExecute) return;
+
         if (_menuType == MenuTypes.Home)
         {
             _gameTitleObject.GetComponent<Text>().text = _appWindowsManager.GetSelectAppTitle();
@@ -225,7 +227,8 @@ public class OverAllManager : MonoBehaviour
                     }
                 }
 
-                _gameCategoryIcons[0].color = count == 0 ? new Color(255f, 255f, 255f, 0f) : new Color(255f, 255f, 255f, 255f);
+                _gameCategoryIcons[0].color =
+                    count == 0 ? new Color(255f, 255f, 255f, 0f) : new Color(255f, 255f, 255f, 255f);
 
                 AnimationGameCategory(); //選択中のゲームカテゴリの変更アニメーションをしつつ
 
