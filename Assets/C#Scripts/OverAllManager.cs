@@ -151,7 +151,7 @@ public class OverAllManager : MonoBehaviour
         if (_menuType == MenuTypes.Home)
         {
             _gameTitleObject.GetComponent<Text>().text = _appWindowsManager.GetSelectAppTitle();
-            Debug.Log(_apps.Count);
+            //Debug.Log(_apps.Count);
             _gameCategoryIconObject.SetActive(_apps.Count > 0);
         }
 
