@@ -4059,6 +4059,7 @@ MonoBehaviour:
   _appWindowsPrefabs: {fileID: 1467866015372896, guid: ea1acc6fe85ae044bae641de889844e9,
     type: 3}
   _gameTitleObject: {fileID: 1498256692}
+  _gameCategoryIconObject: {fileID: 298536309}
   _selectingGameCategoryObject: {fileID: 952804185}
   _backGround: {fileID: 233217559}
   _home: {fileID: 1958032740}
