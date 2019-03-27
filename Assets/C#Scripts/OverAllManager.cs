@@ -15,6 +15,7 @@ public class OverAllManager : MonoBehaviour
     //GameObjects
     [SerializeField] private GameObject _appWindowsPrefabs; //アプリケーションウィンドウのプレハブ
     [SerializeField] private GameObject _gameTitleObject; //ゲームタイトルを表示するテキストオブジェクト
+    [SerializeField] private GameObject _gameCategoryIconObject; //選択されているゲームのカテゴリアイコン
     [SerializeField] private GameObject _selectingGameCategoryObject; //選択中のゲームカテゴリを表示するテキストオブジェクト
     [SerializeField] private GameObject _backGround; //バックグラウンドオブジェクト（ただの背景）
     [SerializeField] private GameObject _home; //Home画面のオブジェクトをまとめるからのオブジェクト
@@ -110,6 +111,8 @@ public class OverAllManager : MonoBehaviour
 
         LoadApplication();
 
+        if (_apps.Count <= 0) _gameCategoryIconObject.SetActive(false);
+        else _gameCategoryIconObject.SetActive(true);
         _appWindowsManager = gameObject.GetComponent<AppWindowsManager>();
         _appWindowsManager.Initialize();
 
@@ -150,6 +153,8 @@ public class OverAllManager : MonoBehaviour
         if (_menuType == MenuTypes.Home)
         {
             _gameTitleObject.GetComponent<Text>().text = _appWindowsManager.GetSelectAppTitle();
+            if (_apps.Count <= 0) _gameCategoryIconObject.SetActive(false);
+            else _gameCategoryIconObject.SetActive(true);
         }
 
         if (Input.GetButtonDown("Cancel") && !_openDialogFlag)
