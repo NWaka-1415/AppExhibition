@@ -75,6 +75,10 @@ public class ApplicationWindow : MonoBehaviour
 
         _exitedFlag = false;
         _executeFlag = false;
+
+        SetUpProc();
+        _proc.Start();
+        ForceExit();
     }
 
     public void MoveWindow(Vector2 vector2)
@@ -83,12 +87,17 @@ public class ApplicationWindow : MonoBehaviour
         //DebugLogPosition();
     }
 
-    public void Execute()
+    private void SetUpProc()
     {
-        if (_executeFlag) return;
         _proc = new Process();
         _proc.StartInfo.FileName = _exeFileName;
         _proc.EnableRaisingEvents = true;
+    }
+
+    public void Execute()
+    {
+        if (_executeFlag) return;
+        if (_proc == null) SetUpProc();
 
         _executeFlag = true;
         _exitedFlag = false;
@@ -104,6 +113,15 @@ public class ApplicationWindow : MonoBehaviour
         _executeFlag = false;
         _exitedFlag = true;
         //Debug.Log("アプリケーションの終了を検知");
+    }
+
+    private void ForceExit()
+    {
+        if(!_proc.CloseMainWindow()) _proc.Kill();
+        
+        _proc.Close();
+        _proc.Dispose();
+        Debug.Log("初期の自動起動後の自動終了");
     }
 
     private void DebugLogPosition()
