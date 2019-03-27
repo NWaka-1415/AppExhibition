@@ -111,8 +111,6 @@ public class OverAllManager : MonoBehaviour
 
         LoadApplication();
 
-        if (_apps.Count <= 0) _gameCategoryIconObject.SetActive(false);
-        else _gameCategoryIconObject.SetActive(true);
         _appWindowsManager = gameObject.GetComponent<AppWindowsManager>();
         _appWindowsManager.Initialize();
 
@@ -153,8 +151,8 @@ public class OverAllManager : MonoBehaviour
         if (_menuType == MenuTypes.Home)
         {
             _gameTitleObject.GetComponent<Text>().text = _appWindowsManager.GetSelectAppTitle();
-            if (_apps.Count <= 0) _gameCategoryIconObject.SetActive(false);
-            else _gameCategoryIconObject.SetActive(true);
+            Debug.Log(_apps.Count);
+            _gameCategoryIconObject.SetActive(_apps.Count > 0);
         }
 
         if (Input.GetButtonDown("Cancel") && !_openDialogFlag)
