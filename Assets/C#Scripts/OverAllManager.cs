@@ -23,17 +23,23 @@ public class OverAllManager : MonoBehaviour
     [SerializeField] private GameObject _settingsPanel; //Settings画面のパネル
     [SerializeField] private GameObject _addAppPanel; //Add画面のパネル
     [SerializeField] private GameObject _deleteAppPanel; //Delete画面のパネル
+    [SerializeField] private GameObject _editPanel; //Edit画面のパネル
     [SerializeField] private GameObject _dialogPanel; //Dialog画面のパネル
     [SerializeField] private GameObject _fileSelectButtonText; //アプリケーションファイル選択ダイアログオープンボタンオブジェクト in Add
     [SerializeField] private GameObject _imageFileSelectButtonText; //イメージファイル選択ダイアログオープンボタンオブジェクト in Add
     [SerializeField] private GameObject _titleNameEnter; //ゲームタイトルインプットフィールドオブジェクト in Add
     [SerializeField] private GameObject _gameCategoryDropdown; //ゲームカテゴリドロップダウンオブジェクト in Add
+    [SerializeField] private GameObject _fileSelectButtonTextOnEdit; //Edit画面のアプリケーションファイル選択ダイアログオープンボタンオブジェクト in Edit
+    [SerializeField] private GameObject _imageFileSelectButtonTextOnEdit; //Edit画面のイメージファイル選択ダイアログオープンボタンオブジェクト in Edit
+    [SerializeField] private GameObject _titleNameEnterOnEdit; //Edit画面のタイトル入力フィード
+    [SerializeField] private GameObject _gameCategoryDropDownOnEdit; //Edit画面のカテゴリードロップダウンオブジェクト
 
     //Buttons
     [SerializeField] private Button _firstSelectButtonOnSetting; //最初に選択されているボタン in Setting
     [SerializeField] private Button _firstSelectButtonOnAdd; //最初に選択されているボタン in Add
     [SerializeField] private Button _firstSelectButtonOnDelete; //最初に選択されているボタン in Delete
     [SerializeField] private Button _firstSelectButtonOnDialog; //最初に選択されているボタン in Dialog
+    [SerializeField] private Button _firstSelectButtonOnEdit; //最初に選択されている in Edit
 
     //Animators
     [SerializeField] private Animator _gameCategoryAnimator; //ゲームカテゴリBackGroundのコンポーネント＜アニメーター＞
@@ -43,7 +49,8 @@ public class OverAllManager : MonoBehaviour
 
     //Images
     [SerializeField] private Image[] _gameCategoryIcons; //ゲームカテゴリのアイコンオブジェクトのコンポーネントs＜Image＞
-    [SerializeField] private Image _dialogIcon; //ダイアログ画面上のゲームアイコンオブジェクトにコンポーネント＜Image＞
+    [SerializeField] private Image _dialogIcon; //ダイアログ画面上のゲームアイコンオブジェクトのコンポーネント＜Image＞
+    [SerializeField] private Image _editIcon; //Edit画面のゲームアイコンオブジェクトのコンポーネント＜Image＞
 
     private AppWindowsManager _appWindowsManager;
 
@@ -62,45 +69,29 @@ public class OverAllManager : MonoBehaviour
     private Vector2 _prevDPad;
 
     private bool _openDialogFlag; //Dialogを開いていたらTrue おそらくもう不要
-    private bool _isMenuOpen;
+    private bool _isMenuOpen; //メニューが開かれているか
+    private bool _isEdit; //Editモードかどうか
 
     private int _selectingGameCategory; //選ばれているゲームカテゴリ
     private int _previousSelectingGameCategory; //前フレームで選ばれていたゲームカテゴリ
 
     class App
     {
-        private readonly string _gameName;
-        private readonly string _fileName;
-        private readonly string _imageFileName;
-        private readonly GameCategory _gameCategory;
-
         public App(string gameName, string fileName, string imageFileName, GameCategory gameCategory)
         {
-            _gameName = gameName;
-            _fileName = fileName;
-            _imageFileName = imageFileName;
-            _gameCategory = gameCategory;
+            GameName = gameName;
+            FileName = fileName;
+            ImageFileName = imageFileName;
+            GameCategory = gameCategory;
         }
 
-        public string GameName
-        {
-            get { return _gameName; }
-        }
+        public string GameName { get; set; }
 
-        public string FileName
-        {
-            get { return _fileName; }
-        }
+        public string FileName { get; set; }
 
-        public string ImageFileName
-        {
-            get { return _imageFileName; }
-        }
+        public string ImageFileName { get; set; }
 
-        public GameCategory GameCategory
-        {
-            get { return _gameCategory; }
-        }
+        public GameCategory GameCategory { get; set; }
     }
 
     // Use this for initialization
@@ -132,6 +123,7 @@ public class OverAllManager : MonoBehaviour
         }
 
         _isMenuOpen = false;
+        _isEdit = false;
         _settingsPanel.SetActive(false);
 
         _setFileName = "";
@@ -284,6 +276,7 @@ public class OverAllManager : MonoBehaviour
     {
         GameCategory gameCategory = ExchangeGameCategoryFromInt(value);
         _gameCategoryDropdown.GetComponent<Dropdown>().options[value].text = gameCategory.ToString();
+        _gameCategoryDropDownOnEdit.GetComponent<Dropdown>().options[value].text = gameCategory.ToString();
     }
 
     void CreateAppWindow(App app)
@@ -352,6 +345,7 @@ public class OverAllManager : MonoBehaviour
                 MenuChange();
                 break;
             case MenuTypes.IndividualDelete:
+                //アプリケーション個別削除からホームに戻る
                 _appWindowsManager.ResetAppInstants();
                 foreach (App app in _apps)
                 {
@@ -362,6 +356,20 @@ public class OverAllManager : MonoBehaviour
                 _menu.SetActive(true);
                 _home.SetActive(true);
                 _dialogPanel.SetActive(false);
+                _menuType = MenuTypes.Home;
+                break;
+            case MenuTypes.Edit:
+                _appWindowsManager.ResetAppInstants();
+                foreach (App app in _apps)
+                {
+                    CreateAppWindow(app);
+                }
+
+                _appWindowsManager.Initialize();
+                _editPanel.SetActive(false);
+                _isEdit = false;
+                _home.SetActive(true);
+                _menu.SetActive(true);
                 _menuType = MenuTypes.Home;
                 break;
         }
@@ -511,6 +519,26 @@ public class OverAllManager : MonoBehaviour
         BackTo();
     }
 
+    public void ChangeApplicationInfo()
+    {
+        _setGameTitle = _titleNameEnterOnEdit.GetComponent<InputField>().text;
+        if (_setFileName == "" || _setGameTitle == "")
+        {
+            return;
+        }
+
+        //ゲームカテゴリをセット
+        _setGameCategory = ExchangeGameCategoryFromInt(_gameCategoryDropDownOnEdit.GetComponent<Dropdown>().value);
+
+        _apps[_appWindowsManager.GetSelectAppNumber()].FileName = _setFileName;
+        _apps[_appWindowsManager.GetSelectAppNumber()].ImageFileName = _setImageFileName;
+        _apps[_appWindowsManager.GetSelectAppNumber()].GameName = _setGameTitle;
+        _apps[_appWindowsManager.GetSelectAppNumber()].GameCategory = _setGameCategory;
+        SaveApplication();
+
+        BackTo();
+    }
+
     public void CreateApplication()
     {
         //決定ボタンを押されたときの処理
@@ -536,6 +564,8 @@ public class OverAllManager : MonoBehaviour
     public void OpenFile()
     {
         if (_openDialogFlag) return;
+        Text fileSelectButtonText = _fileSelectButtonText.GetComponent<Text>();
+        if (_isEdit) fileSelectButtonText = _fileSelectButtonTextOnEdit.GetComponent<Text>();
         //Fileのパスを取得
         _setFileName = "";
 
@@ -552,16 +582,24 @@ public class OverAllManager : MonoBehaviour
 
         _eventSystem.enabled = true;
         _openDialogFlag = false;
-        GameObject.Find("FileSelectButton").GetComponent<Button>().Select();
+        if (!_isEdit) _firstSelectButtonOnAdd.Select();
+        else _firstSelectButtonOnEdit.Select();
+        //GameObject.Find("FileSelectButton").GetComponent<Button>().Select();
 
         Debug.Log("ShowDialog Off");
 
         //Debug.Log(_setFileName);
+        if (_isEdit)
+        {
+            fileSelectButtonText.text = _apps[_appWindowsManager.GetSelectAppNumber()].FileName;
+        }
+
         if (openFileDialog.FileName == null)
         {
             Debug.Log("null");
             _setFileName = "";
-            _fileSelectButtonText.GetComponent<Text>().text = "ゲームのexeファイルを選択してください";
+            fileSelectButtonText.text =
+                _isEdit ? _apps[_appWindowsManager.GetSelectAppNumber()].FileName : "ゲームのexeファイルを選択してください";
         }
         else
         {
@@ -570,13 +608,14 @@ public class OverAllManager : MonoBehaviour
             if (openFileDialog.FileName == "")
             {
                 _setFileName = "";
-                _fileSelectButtonText.GetComponent<Text>().text = "ゲームのexeファイルを選択してください";
+                fileSelectButtonText.text =
+                    _isEdit ? _apps[_appWindowsManager.GetSelectAppNumber()].FileName : "ゲームのexeファイルを選択してください";
             }
             else
             {
                 _setFileName = openFileDialog.FileName;
                 Debug.Log("SetFile:" + _setFileName);
-                _fileSelectButtonText.GetComponent<Text>().text = _setFileName;
+                fileSelectButtonText.text = _setFileName;
             }
         }
 
@@ -602,27 +641,33 @@ public class OverAllManager : MonoBehaviour
         _eventSystem.enabled = true;
         _openDialogFlag = false;
 
+        Text imageFileSelectButtonText = _imageFileSelectButtonText.GetComponent<Text>();
+        if (_isEdit) imageFileSelectButtonText = _imageFileSelectButtonTextOnEdit.GetComponent<Text>();
         GameObject.Find("ImageFileSelectButton").GetComponent<Button>().Select();
+
+        if (_isEdit) imageFileSelectButtonText.text = _appWindowsManager.GetSelectAppImageFileName();
 
         if (openFileDialog1.FileName == null)
         {
             Debug.Log("null");
-            _setImageFileName = "";
-            _imageFileSelectButtonText.GetComponent<Text>().text = "ゲームアイコンのpngファイルを選択してください";
+            _setImageFileName = _isEdit ? _appWindowsManager.GetSelectAppImageFileName() : "";
+            imageFileSelectButtonText.text =
+                _isEdit ? _appWindowsManager.GetSelectAppImageFileName() : "ゲームアイコンのpngファイルを選択してください";
         }
         else
         {
             Debug.Log("not null");
             if (openFileDialog1.FileName == "")
             {
-                _setImageFileName = "";
-                _imageFileSelectButtonText.GetComponent<Text>().text = "ゲームアイコンのpngファイルを選択してください";
+                _setImageFileName = _isEdit ? _appWindowsManager.GetSelectAppImageFileName() : "";
+                imageFileSelectButtonText.text =
+                    _isEdit ? _appWindowsManager.GetSelectAppImageFileName() : "ゲームアイコンのpngファイルを選択してください";
             }
             else
             {
                 _setImageFileName = openFileDialog1.FileName;
                 Debug.Log("setImg:" + _setImageFileName);
-                _imageFileSelectButtonText.GetComponent<Text>().text = _setImageFileName;
+                imageFileSelectButtonText.text = _setImageFileName;
             }
         }
 
@@ -690,6 +735,35 @@ public class OverAllManager : MonoBehaviour
         BackTo();
     }
 
+    public void EditApplication()
+    {
+        //Edit画面を開く
+        MenuChange(); //isOpenをfalseに
+        _menu.SetActive(false);
+        _home.SetActive(false);
+        _editPanel.SetActive(true);
+
+        _isEdit = true;
+
+        _editIcon.color = new Color(255f, 255f, 255f, 255f); //一応
+        _editIcon.sprite =
+            SpriteEditor.SpriteFromFile(_appWindowsManager.GetSelectAppImageFileName());
+        _menuType = MenuTypes.Edit;
+
+        _setFileName = _apps[_appWindowsManager.GetSelectAppNumber()].FileName;
+        _setImageFileName = _appWindowsManager.GetSelectAppImageFileName();
+        _setGameTitle = _appWindowsManager.GetSelectAppTitle();
+        _setGameCategory = _apps[_appWindowsManager.GetSelectAppNumber()].GameCategory;
+        _fileSelectButtonTextOnEdit.GetComponent<Text>().text = _setFileName;
+        _imageFileSelectButtonTextOnEdit.GetComponent<Text>().text = _setImageFileName;
+        _titleNameEnterOnEdit.GetComponent<InputField>().text = _setGameTitle;
+        //DropDownのやつも元に戻すこと
+        _gameCategoryDropDownOnEdit.GetComponent<Dropdown>().value =
+            (int) _apps[_appWindowsManager.GetSelectAppNumber()].GameCategory;
+
+        _firstSelectButtonOnEdit.Select();
+    }
+
     public void AnimationGameCategory()
     {
         _gameCategoryAnimator.SetTrigger("Anim");
@@ -753,6 +827,7 @@ public class OverAllManager : MonoBehaviour
         Add,
         Delete,
         Menu,
-        IndividualDelete
+        IndividualDelete,
+        Edit
     }
 }
