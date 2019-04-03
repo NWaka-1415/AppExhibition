@@ -72,6 +72,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _appImage: {fileID: 1676665922836758}
   _appStartMessage: {fileID: 1562675145131570}
+  _selectingCursor: {fileID: 0}
 --- !u!1 &1562675145131570
 GameObject:
   m_ObjectHideFlags: 0
