@@ -40,13 +40,15 @@ public class ApplicationWindow : MonoBehaviour
         if (_previousState == OverAllManager.State.Unselect && _state == OverAllManager.State.Select)
         {
             //非選択状態から選択状態への遷移
-            _animator.SetTrigger("UnselectToSelect");
+            _animator.SetBool("SelectToUnselect", false);
+            _animator.SetBool("UnselectToSelect", true);
             _previousState = _state;
         }
         else if (_previousState == OverAllManager.State.Select && _state == OverAllManager.State.Unselect)
         {
             //選択状態から非選択状態への遷移
-            _animator.SetTrigger("SelectToUnselect");
+            _animator.SetBool("UnselectToSelect", false);
+            _animator.SetBool("SelectToUnselect", true);
             _previousState = _state;
         }
 
@@ -117,8 +119,8 @@ public class ApplicationWindow : MonoBehaviour
 
     private void ForceExit()
     {
-        if(!_proc.CloseMainWindow()) _proc.Kill();
-        
+        if (!_proc.CloseMainWindow()) _proc.Kill();
+
         _proc.Close();
         _proc.Dispose();
         Debug.Log("初期の自動起動後の自動終了");
