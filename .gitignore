@@ -4,3 +4,5 @@ App/AppExhibition_Data/
 App/
 Assets/Plugins/
 *.zip
+.idea/
+*.csproj
