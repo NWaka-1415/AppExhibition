@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class AppWindowsManager : MonoBehaviour
 {
     //アプリウィンドウオブジェクトを管理するクラス
-    [SerializeField] private OverAllManager _overAllManager;
+    [SerializeField] private OverAllManager _overAllManager = null;
     private List<GameObject> _appWidowInstants;
     private int _selectedNumber;
     private int _previousSelectNumber;
@@ -39,14 +39,14 @@ public class AppWindowsManager : MonoBehaviour
         {
             _isExecute = true;
             //背景OFF
-            GetComponent<OverAllManager>().BackGround.SetActive(false);
+            _overAllManager.BackGround.SetActive(false);
             //ゲームタイトルOFF
-            GetComponent<OverAllManager>().GameTitleObject.GetComponent<Text>().enabled = false;
+            _overAllManager.GameTitleObject.GetComponent<Text>().enabled = false;
             //ゲームカテゴリOFF
-            GetComponent<OverAllManager>().SelectingGameCategoryObject.SetActive(false);
+            _overAllManager.SelectingGameCategoryObject.SetActive(false);
             for (int i = 0; i < 2; i++)
             {
-                GetComponent<OverAllManager>().SetImageAlpha(i, 0f);
+                _overAllManager.SetImageAlpha(i, 0f);
             }
 
             foreach (GameObject appWidowInstant in _appWidowInstants)
@@ -62,14 +62,14 @@ public class AppWindowsManager : MonoBehaviour
         {
             _isExecute = false;
             //背景ON
-            GetComponent<OverAllManager>().BackGround.SetActive(true);
+            _overAllManager.BackGround.SetActive(true);
             //ゲームタイトルON
-            GetComponent<OverAllManager>().GameTitleObject.GetComponent<Text>().enabled = true;
+            _overAllManager.GameTitleObject.GetComponent<Text>().enabled = true;
             //ゲームカテゴリON
-            GetComponent<OverAllManager>().SelectingGameCategoryObject.SetActive(true);
+            _overAllManager.SelectingGameCategoryObject.SetActive(true);
             for (int i = 0; i < 2; i++)
             {
-                GetComponent<OverAllManager>().SetImageAlpha(i, 255f);
+                _overAllManager.SetImageAlpha(i, 255f);
             }
 
             foreach (GameObject appWidowInstant in _appWidowInstants)

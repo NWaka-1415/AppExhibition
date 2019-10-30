@@ -5,12 +5,17 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using Button = UnityEngine.UI.Button;
+using Cursor = UnityEngine.Cursor;
 using Screen = UnityEngine.Screen;
 
 namespace Controllers
 {
     public class OverAllManager : MonoBehaviour
     {
+        private static OverAllManager _instance = null;
+
+        public static OverAllManager Instance => _instance;
+
         //EventSystem
         [SerializeField] private EventSystem _eventSystem; //イベントシステム　入力受付停止などに用いる
 
@@ -27,6 +32,9 @@ namespace Controllers
         [SerializeField] private GameObject _deleteAppPanel; //Delete画面のパネル
         [SerializeField] private GameObject _editPanel; //Edit画面のパネル
         [SerializeField] private GameObject _dialogPanel; //Dialog画面のパネル
+        [SerializeField] private GameObject _passwordSetPanel = null;
+        [SerializeField] private GameObject _passwordCheckPanel = null;
+        [SerializeField] private GameObject _welcomePanel = null;
         [SerializeField] private GameObject _fileSelectButtonText; //アプリケーションファイル選択ダイアログオープンボタンオブジェクト in Add
         [SerializeField] private GameObject _imageFileSelectButtonText; //イメージファイル選択ダイアログオープンボタンオブジェクト in Add
         [SerializeField] private GameObject _titleNameEnter; //ゲームタイトルインプットフィールドオブジェクト in Add
@@ -47,6 +55,9 @@ namespace Controllers
         [SerializeField] private Button _firstSelectButtonOnDelete; //最初に選択されているボタン in Delete
         [SerializeField] private Button _firstSelectButtonOnDialog; //最初に選択されているボタン in Dialog
         [SerializeField] private Button _firstSelectButtonOnEdit; //最初に選択されている in Edit
+        [SerializeField] private Button nextButtonOnWelcome;
+        [SerializeField] private InputField firstSelectOnPassSet = null;
+        [SerializeField] private InputField firstSelectOnPassCheck = null;
 
         //Animators
         [SerializeField] private Animator _gameCategoryAnimator; //ゲームカテゴリBackGroundのコンポーネント＜アニメーター＞
@@ -82,6 +93,10 @@ namespace Controllers
         private int _selectingGameCategory; //選ばれているゲームカテゴリ
         private int _previousSelectingGameCategory; //前フレームで選ばれていたゲームカテゴリ
 
+        private bool _isShowWelcomePage;
+
+        private MenuTypes _willMenuType;
+
         class App
         {
             public App(string gameName, string fileName, string imageFileName, GameCategory gameCategory)
@@ -101,6 +116,13 @@ namespace Controllers
             public GameCategory GameCategory { get; set; }
         }
 
+        private void Awake()
+        {
+            if (_instance == null) _instance = this;
+            else if (_instance != this) Destroy(gameObject);
+            Cursor.visible = false;
+        }
+
         // Use this for initialization
         void Start()
         {
@@ -108,6 +130,21 @@ namespace Controllers
             Screen.SetResolution(1024, 576, FullScreenMode.FullScreenWindow);
 
             LoadApplication();
+            _menuType = _isShowWelcomePage ? MenuTypes.Welcome : MenuTypes.Home;
+            switch (_menuType)
+            {
+                case MenuTypes.Welcome:
+                    _welcomePanel.SetActive(true);
+                    _home.SetActive(false);
+                    nextButtonOnWelcome.Select();
+                    break;
+                case MenuTypes.Home:
+                    _welcomePanel.SetActive(false);
+                    _home.SetActive(true);
+                    break;
+                default:
+                    break;
+            }
 
             _appWindowsManager = gameObject.GetComponent<AppWindowsManager>();
             _appWindowsManager.Initialize();
@@ -171,6 +208,7 @@ namespace Controllers
                     _settingsPanel.SetActive(true);
                     //_appWindowsManager.ResetAppInstants();
                     _firstSelectButtonOnSetting.Select();
+                    _firstSelectButtonOnSetting.OnSelect(null);
                     _menuType = MenuTypes.Settings;
                 }
             }
@@ -344,6 +382,7 @@ namespace Controllers
                     _home.SetActive(false);
                     _settingsPanel.SetActive(true);
                     _firstSelectButtonOnSetting.Select();
+                    _firstSelectButtonOnSetting.OnSelect(null);
                     _menuType = MenuTypes.Settings;
                     ClearAddAppInfo();
                     break;
@@ -353,6 +392,7 @@ namespace Controllers
                     _addAppPanel.SetActive(false);
                     _settingsPanel.SetActive(true);
                     _firstSelectButtonOnSetting.Select();
+                    _firstSelectButtonOnSetting.OnSelect(null);
                     _menuType = MenuTypes.Settings;
                     break;
                 case MenuTypes.Settings:
@@ -402,8 +442,31 @@ namespace Controllers
                     _menuType = MenuTypes.Home;
                     break;
                 case MenuTypes.PasswordSet:
+                    _passwordSetPanel.SetActive(false);
+                    _welcomePanel.SetActive(true);
+                    nextButtonOnWelcome.Select();
                     break;
                 case MenuTypes.PasswordCheck:
+                    _passwordCheckPanel.SetActive(false);
+                    switch (_willMenuType)
+                    {
+                        case MenuTypes.Add:
+                        case MenuTypes.Delete:
+                            _firstSelectButtonOnSetting.Select();
+                            _firstSelectButtonOnSetting.OnSelect(null);
+                            _settingsPanel.SetActive(true);
+                            _menuType = MenuTypes.Settings;
+                            break;
+                        case MenuTypes.IndividualDelete:
+                        case MenuTypes.Edit:
+                            _home.SetActive(true);
+                            _menu.SetActive(true);
+                            _menuType = MenuTypes.Home;
+                            break;
+                    }
+
+                    break;
+                case MenuTypes.Welcome:
                     break;
             }
         }
@@ -446,6 +509,8 @@ namespace Controllers
             string[] gameFileNames = PlayerPrefsX.GetStringArray("AppFileNames");
             string[] gameImageFileNames = PlayerPrefsX.GetStringArray("AppImageFileNames");
             int[] gameCategories = PlayerPrefsX.GetIntArray("GameCategories");
+            PasswordController.Password = PlayerPrefs.GetString("Password", "");
+            _isShowWelcomePage = !PasswordController.SetPassword;
 
             if (gameNames.Length == 0 || gameFileNames.Length == 0 || gameCategories.Length == 0) return;
 
@@ -478,22 +543,75 @@ namespace Controllers
             PlayerPrefsX.SetStringArray("AppFileNames", gameFileNames);
             PlayerPrefsX.SetStringArray("AppImageFileNames", gameImageFileNames);
             PlayerPrefsX.SetIntArray("GameCategories", gameCategories);
+            PlayerPrefs.SetString("Password", PasswordController.Password);
         }
 
-        public void MoveToAddApp()
+        public void MoveToHomeFromWelcomes()
+        {
+            _menuType = MenuTypes.Home;
+            _home.SetActive(true);
+            _welcomePanel.SetActive(false);
+            _passwordSetPanel.SetActive(false);
+            SaveApplication();
+        }
+
+        public void SetMoveToAddApp()
+        {
+            _willMenuType = MenuTypes.Add;
+            _menuType = MenuTypes.PasswordCheck;
+            _settingsPanel.SetActive(false);
+            _passwordCheckPanel.SetActive(true);
+            firstSelectOnPassCheck.Select();
+            firstSelectOnPassCheck.OnSelect(null);
+        }
+
+        private void MoveToAddApp()
         {
             _firstSelectButtonOnAdd.Select();
+            _firstSelectButtonOnAdd.OnSelect(null);
             _settingsPanel.SetActive(false);
             _addAppPanel.SetActive(true);
             _menuType = MenuTypes.Add;
+            _willMenuType = MenuTypes.None;
         }
 
-        public void MoveToDeleteApp()
+        public void SetMoveToDeleteApp()
+        {
+            _willMenuType = MenuTypes.Delete;
+            _menuType = MenuTypes.PasswordCheck;
+            _settingsPanel.SetActive(false);
+            _passwordCheckPanel.SetActive(true);
+            firstSelectOnPassCheck.Select();
+        }
+
+        private void MoveToDeleteApp()
         {
             _firstSelectButtonOnDelete.Select();
+            _firstSelectButtonOnDelete.OnSelect(null);
             _settingsPanel.SetActive(false);
             _deleteAppPanel.SetActive(true);
             _menuType = MenuTypes.Delete;
+            _willMenuType = MenuTypes.None;
+        }
+
+        public void CheckPass()
+        {
+            _passwordCheckPanel.SetActive(false);
+            PasswordController.Instance.ResetPassCheckField();
+            switch (_willMenuType)
+            {
+                case MenuTypes.Add:
+                    MoveToAddApp();
+                    break;
+                case MenuTypes.Delete:
+                    MoveToDeleteApp();
+                    break;
+                case MenuTypes.IndividualDelete:
+                    break;
+                case MenuTypes.Edit:
+                    EditApplication();
+                    break;
+            }
         }
 
         public void OpenDialogWindow()
@@ -518,6 +636,7 @@ namespace Controllers
             }
 
             _firstSelectButtonOnDialog.Select();
+            _firstSelectButtonOnDialog.OnSelect(null);
         }
 
         public void OnClickedDialogOkButton()
@@ -550,6 +669,15 @@ namespace Controllers
         {
             //キャンセルによって，前の画面に戻るだけ
             BackTo();
+        }
+
+        public void OnclickWelcomeToSetPass()
+        {
+            _menuType = MenuTypes.PasswordSet;
+            _welcomePanel.SetActive(false);
+            _passwordSetPanel.SetActive(true);
+            firstSelectOnPassSet.Select();
+            firstSelectOnPassSet.OnSelect(null);
         }
 
         public void ChangeApplicationInfo()
@@ -615,8 +743,16 @@ namespace Controllers
 
             _eventSystem.enabled = true;
             _openDialogFlag = false;
-            if (!_isEdit) _firstSelectButtonOnAdd.Select();
-            else _firstSelectButtonOnEdit.Select();
+            if (!_isEdit)
+            {
+                _firstSelectButtonOnAdd.Select();
+                _firstSelectButtonOnAdd.OnSelect(null);
+            }
+            else
+            {
+                _firstSelectButtonOnEdit.Select();
+                _firstSelectButtonOnEdit.OnSelect(null);
+            }
             //GameObject.Find("FileSelectButton").GetComponent<Button>().Select();
 
             Debug.Log("ShowDialog Off");
@@ -768,10 +904,22 @@ namespace Controllers
             BackTo();
         }
 
-        public void EditApplication()
+        public void SetEditApplication()
+        {
+            MenuChange();
+            _willMenuType = MenuTypes.Edit;
+            _menuType = MenuTypes.PasswordCheck;
+            _menu.SetActive(false);
+            _home.SetActive(false);
+            _passwordCheckPanel.SetActive(true);
+            firstSelectOnPassCheck.Select();
+            firstSelectOnPassCheck.OnSelect(null);
+        }
+
+        private void EditApplication()
         {
             //Edit画面を開く
-            MenuChange(); //isOpenをfalseに
+//            MenuChange(); //isOpenをfalseに
             _menu.SetActive(false);
             _home.SetActive(false);
             _editPanel.SetActive(true);
@@ -795,6 +943,7 @@ namespace Controllers
                 (int) _apps[_appWindowsManager.GetSelectAppNumber()].GameCategory;
 
             _firstSelectButtonOnEdit.Select();
+            _firstSelectButtonOnEdit.OnSelect(null);
         }
 
         public void AnimationGameCategory()
@@ -813,30 +962,15 @@ namespace Controllers
             _gameCategoryIcons[number].color = new Color(255f, 255f, 255f, alpha);
         }
 
-        public GameObject SelectingGameCategoryObject
-        {
-            get { return _selectingGameCategoryObject; }
-        }
+        public GameObject SelectingGameCategoryObject => _selectingGameCategoryObject;
 
-        public GameObject BackGround
-        {
-            get { return _backGround; }
-        }
+        public GameObject BackGround => _backGround;
 
-        public GameObject GameTitleObject
-        {
-            get { return _gameTitleObject; }
-        }
+        public GameObject GameTitleObject => _gameTitleObject;
 
-        public int SelectingGameCategory
-        {
-            get { return _selectingGameCategory; }
-        }
+        public int SelectingGameCategory => _selectingGameCategory;
 
-        public static MenuTypes MenuType
-        {
-            get { return _menuType; }
-        }
+        public static MenuTypes MenuType => _menuType;
 
         public enum GameCategory
         {
@@ -863,7 +997,9 @@ namespace Controllers
             IndividualDelete,
             Edit,
             PasswordSet,
-            PasswordCheck
+            PasswordCheck,
+            Welcome,
+            None
         }
     }
 }

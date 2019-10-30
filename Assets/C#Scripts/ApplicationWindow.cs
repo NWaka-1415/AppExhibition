@@ -108,7 +108,8 @@ public class ApplicationWindow : MonoBehaviour
         _animator.SetBool("isStart", _executeFlag);
 
         _proc.Exited += Exited;
-        _proc.Start();
+        bool executeResult = _proc.Start();
+        Debug.Log($"execute : {executeResult}");
     }
 
     private void Exited(object sender, EventArgs e)

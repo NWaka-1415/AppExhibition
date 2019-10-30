@@ -16,24 +16,42 @@ namespace Controllers
         [SerializeField] private InputField passwordSetCheckInputField = null;
         [SerializeField] private InputField passwordCheckInputField = null;
         [SerializeField] private Button okButton = null;
-        [SerializeField] private Button cancelButton = null;
+        [SerializeField] private Button okSetButton = null;
+
+        private static bool _setPassword;
+
+        public static bool SetPassword => _setPassword;
 
         private static string _password;
 
         public static string Password
         {
             get { return _password; }
+            set
+            {
+                if (_setPassword) return;
+                if (value == "") return;
+                _password = value;
+                _setPassword = true;
+            }
         }
 
         private void Awake()
         {
             if (_instance == null) _instance = this;
             else if (_instance != this) Destroy(gameObject);
+            _setPassword = false;
         }
 
         private void Start()
         {
             okButton.onClick.AddListener(OnclickPasswordCheck);
+            okSetButton.onClick.AddListener(OnclickSetPassword);
+        }
+
+        public void ResetPassCheckField()
+        {
+            passwordCheckInputField.text = "";
         }
 
         /// <summary>
@@ -45,6 +63,7 @@ namespace Controllers
             {
                 //確認用と一致した際の挙動
                 _password = passwordSetInputField.text;
+                OverAllManager.Instance.MoveToHomeFromWelcomes();
             }
             else
             {
@@ -63,6 +82,7 @@ namespace Controllers
             if (pass == _password)
             {
                 //パスワードが正しかった際の挙動
+                OverAllManager.Instance.CheckPass();
             }
             else
             {
