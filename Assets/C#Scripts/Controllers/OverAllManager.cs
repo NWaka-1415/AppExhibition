@@ -448,6 +448,7 @@ namespace Controllers
                     break;
                 case MenuTypes.PasswordCheck:
                     _passwordCheckPanel.SetActive(false);
+                    PasswordController.Instance.ResetPassCheckField();
                     switch (_willMenuType)
                     {
                         case MenuTypes.Add:
