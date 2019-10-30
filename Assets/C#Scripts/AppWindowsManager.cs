@@ -85,11 +85,13 @@ public class AppWindowsManager : MonoBehaviour
         if (Input.GetButtonDown("Left") || (dPad.x < 0 && Mathf.Abs(_prevDPad.x - dPad.x) > 0))
         {
             Debug.Log("<color=red>Axis Horizontal:" + dPad.x + "</color>");
+            AudioController.Instance.Play(AudioController.AudioPattern.Move);
             _selectedNumber--;
         }
         else if (Input.GetButtonDown("Right") || dPad.x > 0 && Mathf.Abs(_prevDPad.x - dPad.x) > 0)
         {
             Debug.Log("<color=red>Axis Horizontal:" + dPad.x + "</color>");
+            AudioController.Instance.Play(AudioController.AudioPattern.Move);
             _selectedNumber++;
         }
 

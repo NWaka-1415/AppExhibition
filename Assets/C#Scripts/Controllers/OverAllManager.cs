@@ -160,6 +160,7 @@ namespace Controllers
                 AudioController.Instance.Play(AudioController.AudioPattern.Cancel);
                 BackTo();
             }
+            else if (Input.GetButtonDown("Ok")) AudioController.Instance.Play(AudioController.AudioPattern.Select);
             else if (Input.GetButtonDown("Y"))
             {
                 Debug.Log("Pressed Y");
@@ -261,22 +262,38 @@ namespace Controllers
                 if (Input.GetButtonDown("Up") || (dPad.y > 0 && Mathf.Abs(_prevDPad.y - dPad.y) > 0))
                 {
                     Debug.Log("<color=red>Axis Horizontal:" + dPad.y + "</color>");
-                    if (nav.selectOnUp != null) nav.selectOnUp.Select();
+                    if (nav.selectOnUp != null)
+                    {
+                        nav.selectOnUp.Select();
+                        AudioController.Instance.Play(AudioController.AudioPattern.Move);
+                    }
                 }
                 else if (Input.GetButtonDown("Down") || dPad.y < 0 && Mathf.Abs(_prevDPad.y - dPad.y) > 0)
                 {
                     Debug.Log("<color=red>Axis Horizontal:" + dPad.y + "</color>");
-                    if (nav.selectOnDown != null) nav.selectOnDown.Select();
+                    if (nav.selectOnDown != null)
+                    {
+                        nav.selectOnDown.Select();
+                        AudioController.Instance.Play(AudioController.AudioPattern.Move);
+                    }
                 }
                 else if (dPad.x < 0 && Mathf.Abs(_prevDPad.x - dPad.x) > 0)
                 {
                     //Left
-                    if (nav.selectOnLeft != null) nav.selectOnLeft.Select();
+                    if (nav.selectOnLeft != null)
+                    {
+                        nav.selectOnLeft.Select();
+                        AudioController.Instance.Play(AudioController.AudioPattern.Move);
+                    }
                 }
                 else if (dPad.x > 0 && Mathf.Abs(_prevDPad.x - dPad.x) > 0)
                 {
                     //Right
-                    if (nav.selectOnRight != null) nav.selectOnRight.Select();
+                    if (nav.selectOnRight != null)
+                    {
+                        nav.selectOnRight.Select();
+                        AudioController.Instance.Play(AudioController.AudioPattern.Move);
+                    }
                 }
             }
 
