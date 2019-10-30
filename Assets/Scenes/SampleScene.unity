@@ -5066,7 +5066,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1716700517}
-        m_MethodName: OpenDialogWindow
+        m_MethodName: DeleteCheckPass
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

@@ -607,11 +607,24 @@ namespace Controllers
                     MoveToDeleteApp();
                     break;
                 case MenuTypes.IndividualDelete:
+                    OpenDialogWindow();
                     break;
                 case MenuTypes.Edit:
                     EditApplication();
                     break;
             }
+        }
+
+        public void DeleteCheckPass()
+        {
+            MenuChange();
+            _menu.SetActive(false);
+            _home.SetActive(false);
+            _willMenuType = MenuTypes.IndividualDelete;
+            _menuType = MenuTypes.PasswordCheck;
+            _passwordCheckPanel.SetActive(true);
+            firstSelectOnPassCheck.Select();
+            firstSelectOnPassCheck.OnSelect(null);
         }
 
         public void OpenDialogWindow()
@@ -623,6 +636,16 @@ namespace Controllers
                 case MenuTypes.Menu:
                     //Menuから移ってくる場合はアプリ単体削除Dialog
                     MenuChange(); //isOpenをfalseに
+                    _menu.SetActive(false);
+                    _home.SetActive(false);
+                    _dialogIcon.color = new Color(255f, 255f, 255f, 255f); //アプリ単体削除ダイアログの場合はゲームのアイコンを表示
+                    _dialogIcon.sprite =
+                        SpriteEditor.SpriteFromFile(_appWindowsManager.GetSelectAppImageFileName());
+                    _dialogPanel.SetActive(true);
+                    _menuType = MenuTypes.IndividualDelete;
+                    break;
+                case MenuTypes.PasswordCheck:
+                    //アプリ単体削除Dialog
                     _menu.SetActive(false);
                     _home.SetActive(false);
                     _dialogIcon.color = new Color(255f, 255f, 255f, 255f); //アプリ単体削除ダイアログの場合はゲームのアイコンを表示
