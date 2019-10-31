@@ -460,6 +460,13 @@ namespace Controllers
                             break;
                         case MenuTypes.IndividualDelete:
                         case MenuTypes.Edit:
+                            _appWindowsManager.ResetAppInstants();
+                            foreach (App app in _apps)
+                            {
+                                CreateAppWindow(app);
+                            }
+
+                            _appWindowsManager.Initialize();
                             _home.SetActive(true);
                             _menu.SetActive(true);
                             _menuType = MenuTypes.Home;
