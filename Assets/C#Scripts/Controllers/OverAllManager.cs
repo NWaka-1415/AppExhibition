@@ -761,6 +761,8 @@ namespace Controllers
             //Fileのパスを取得
             _setFileName = "";
 
+            Cursor.visible = true;
+
             OpenFileDialog openFileDialog = new OpenFileDialog();
 
             openFileDialog.Filter = "exeファイル|*.exe";
@@ -787,6 +789,7 @@ namespace Controllers
             //GameObject.Find("FileSelectButton").GetComponent<Button>().Select();
 
             Debug.Log("ShowDialog Off");
+            Cursor.visible = false;
 
             //Debug.Log(_setFileName);
             if (_isEdit)
@@ -827,6 +830,8 @@ namespace Controllers
             if (_openDialogFlag) return;
             _setImageFileName = "";
 
+            Cursor.visible = true;
+            
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
 
             openFileDialog1.Filter = "pngファイル|*.png";
@@ -844,6 +849,8 @@ namespace Controllers
             Text imageFileSelectButtonText = _imageFileSelectButtonText.GetComponent<Text>();
             if (_isEdit) imageFileSelectButtonText = _imageFileSelectButtonTextOnEdit.GetComponent<Text>();
             GameObject.Find("ImageFileSelectButton").GetComponent<Button>().Select();
+
+            Cursor.visible = false;
 
             if (_isEdit) imageFileSelectButtonText.text = _appWindowsManager.GetSelectAppImageFileName();
 
