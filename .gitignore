@@ -6,3 +6,4 @@ Assets/Plugins/
 *.zip
 .idea/
 *.csproj
+*.docx
