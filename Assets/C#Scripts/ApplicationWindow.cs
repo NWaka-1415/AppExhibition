@@ -80,8 +80,8 @@ public class ApplicationWindow : MonoBehaviour
         _executeFlag = false;
 
         SetUpProc();
-        _proc.Start();
-        ForceExit();
+//        _proc.Start();
+//        ForceExit();
     }
 
     public void MoveWindow(Vector2 vector2)
