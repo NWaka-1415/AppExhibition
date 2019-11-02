@@ -831,7 +831,7 @@ namespace Controllers
             _setImageFileName = "";
 
             Cursor.visible = true;
-            
+
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
 
             openFileDialog1.Filter = "pngファイル|*.png";
@@ -906,10 +906,12 @@ namespace Controllers
                 case 1:
                     return GameCategory.Shooting;
                 case 2:
-                    return GameCategory.Music;
+                    return GameCategory.RPG;
                 case 3:
-                    return GameCategory.Application;
+                    return GameCategory.Music;
                 case 4:
+                    return GameCategory.Application;
+                case 5:
                     return GameCategory.Others;
                 default:
                     return GameCategory.Action;
@@ -924,12 +926,14 @@ namespace Controllers
                     return 0;
                 case GameCategory.Shooting:
                     return 1;
-                case GameCategory.Music:
+                case GameCategory.RPG:
                     return 2;
-                case GameCategory.Application:
+                case GameCategory.Music:
                     return 3;
-                case GameCategory.Others:
+                case GameCategory.Application:
                     return 4;
+                case GameCategory.Others:
+                    return 5;
                 default:
                     return 0;
             }
@@ -991,7 +995,7 @@ namespace Controllers
 
         public void SetCategoryIcon(int number, int gameCategory)
         {
-            if (gameCategory == -1) gameCategory = 5;
+            if (gameCategory == -1) gameCategory = 6;
             _gameCategoryIcons[number].sprite = _gameCategoryIconSprites[gameCategory];
         }
 
@@ -1014,6 +1018,7 @@ namespace Controllers
         {
             Action,
             Shooting,
+            RPG,
             Music,
             Application,
             Others

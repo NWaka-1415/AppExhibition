@@ -2009,6 +2009,8 @@ MonoBehaviour:
       m_Image: {fileID: 0}
     - m_Text: Option C
       m_Image: {fileID: 0}
+    - m_Text: Option C
+      m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -8677,6 +8679,8 @@ MonoBehaviour:
       m_Image: {fileID: 0}
     - m_Text: Option C
       m_Image: {fileID: 0}
+    - m_Text: Option C
+      m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -9918,6 +9922,7 @@ MonoBehaviour:
   _gameCategoryIconSprites:
   - {fileID: 21300000, guid: 1f5825675c07d0f498b9602227d742f7, type: 3}
   - {fileID: 21300000, guid: 4d2eca861b953eb4da2d73776c5fb197, type: 3}
+  - {fileID: 21300000, guid: c5af4bfc814d5b741945319f1dffc223, type: 3}
   - {fileID: 21300000, guid: ee95d7d2d2bc2cf4dbd66beaf2f83944, type: 3}
   - {fileID: 21300000, guid: f2f2c5472848d3542bff91ba40e3f6b7, type: 3}
   - {fileID: 21300000, guid: b9823d16e45b3704cb64627e59f798c7, type: 3}
