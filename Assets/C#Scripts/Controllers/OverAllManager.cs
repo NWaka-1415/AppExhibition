@@ -73,7 +73,7 @@ namespace Controllers
 
         private AppWindowsManager _appWindowsManager;
 
-        [SerializeField, HideInInspector] private List<App> _apps;
+        [SerializeField, HideInInspector] private List<App> apps;
 
         /*
      * 設定でセットされた新しいゲーム（アプリ）の情報
@@ -179,7 +179,7 @@ namespace Controllers
             _appWindowsManager = gameObject.GetComponent<AppWindowsManager>();
             _appWindowsManager.Initialize();
 
-            foreach (App app in _apps)
+            foreach (App app in apps)
             {
                 CreateAppWindow(app);
                 Debug.Log("AppName:" + app.GameName);
@@ -218,7 +218,7 @@ namespace Controllers
             {
                 _gameTitleObject.GetComponent<Text>().text = _appWindowsManager.GetSelectAppTitle();
                 //Debug.Log(_apps.Count);
-                _gameCategoryIconObject.SetActive(_apps.Count > 0);
+                _gameCategoryIconObject.SetActive(apps.Count > 0);
             }
 
             if (Input.GetButtonDown("Cancel") && !_openDialogFlag)
@@ -258,7 +258,7 @@ namespace Controllers
             }
             else if (Input.GetButtonDown("Menu"))
             {
-                if (_currentMenuType == MenuType.Home && _apps.Count > 0)
+                if (_currentMenuType == MenuType.Home && apps.Count > 0)
                 {
                     AudioController.Instance.Play(AudioController.AudioPattern.Open);
                     _currentMenuType = MenuType.Menu;
@@ -285,7 +285,7 @@ namespace Controllers
                     if (_selectingGameCategory == -1)
                     {
                         //All
-                        foreach (App app in _apps)
+                        foreach (App app in apps)
                         {
                             count++;
                             CreateAppWindow(app);
@@ -293,7 +293,7 @@ namespace Controllers
                     }
                     else
                     {
-                        foreach (App app in _apps)
+                        foreach (App app in apps)
                         {
                             if (ExchangeGameCategoryFromInt(_selectingGameCategory) == app.GameCategory)
                             {
@@ -427,7 +427,7 @@ namespace Controllers
                     break;
                 case MenuType.Settings:
                     _appWindowsManager.ResetAppInstants();
-                    foreach (App app in _apps)
+                    foreach (App app in apps)
                     {
                         CreateAppWindow(app);
                     }
@@ -446,7 +446,7 @@ namespace Controllers
                 case MenuType.IndividualDelete:
                     //アプリケーション個別削除からホームに戻る
                     _appWindowsManager.ResetAppInstants();
-                    foreach (App app in _apps)
+                    foreach (App app in apps)
                     {
                         CreateAppWindow(app);
                     }
@@ -459,7 +459,7 @@ namespace Controllers
                     break;
                 case MenuType.Edit:
                     _appWindowsManager.ResetAppInstants();
-                    foreach (App app in _apps)
+                    foreach (App app in apps)
                     {
                         CreateAppWindow(app);
                     }
@@ -491,7 +491,7 @@ namespace Controllers
                         case MenuType.IndividualDelete:
                         case MenuType.Edit:
                             _appWindowsManager.ResetAppInstants();
-                            foreach (App app in _apps)
+                            foreach (App app in apps)
                             {
                                 CreateAppWindow(app);
                             }
@@ -541,38 +541,40 @@ namespace Controllers
 
         void LoadApplication()
         {
+            PasswordController.Password = PlayerPrefs.GetString("Password", "");
             string jsonData = DataController.LoadJson();
+            Debug.Log($"load jsonData:{jsonData}");
             if (jsonData == null)
             {
-                _apps = new List<App>();
+                apps = new List<App>();
                 string[] gameNames = PlayerPrefsX.GetStringArray("AppNames");
                 string[] gameFileNames = PlayerPrefsX.GetStringArray("AppFileNames");
                 string[] gameImageFileNames = PlayerPrefsX.GetStringArray("AppImageFileNames");
                 int[] gameCategories = PlayerPrefsX.GetIntArray("GameCategories");
-                PasswordController.Password = PlayerPrefs.GetString("Password", "");
+                
                 _isShowWelcomePage = !PasswordController.SetPassword;
 
                 if (gameNames.Length == 0 || gameFileNames.Length == 0 || gameCategories.Length == 0) return;
 
                 for (int i = 0; i < gameNames.Length; i++)
                 {
-                    _apps.Add(new App(gameNames[i], gameFileNames[i], gameImageFileNames[i],
+                    apps.Add(new App(gameNames[i], gameFileNames[i], gameImageFileNames[i],
                         ExchangeGameCategoryFromInt(gameCategories[i])));
                 }
             }
-            else _apps = DataController.ChangeDataFromJson<List<App>>(jsonData);
+            else apps = DataController.ChangeDataFromJson<List<App>>(jsonData);
         }
 
         void SaveApplication()
         {
-            string[] gameNames = new string[_apps.Count];
-            string[] gameFileNames = new string[_apps.Count];
-            string[] gameImageFileNames = new string[_apps.Count];
-            int[] gameCategories = new int[_apps.Count];
+            string[] gameNames = new string[apps.Count];
+            string[] gameFileNames = new string[apps.Count];
+            string[] gameImageFileNames = new string[apps.Count];
+            int[] gameCategories = new int[apps.Count];
 
             int i = 0;
 
-            foreach (App app in _apps)
+            foreach (App app in apps)
             {
                 gameNames[i] = app.GameName;
                 gameFileNames[i] = app.FileName;
@@ -587,7 +589,8 @@ namespace Controllers
             PlayerPrefsX.SetIntArray("GameCategories", gameCategories);
             PlayerPrefs.SetString("Password", PasswordController.Password);
 
-            string jsonData = DataController.ChangeJsonFromData(_apps);
+            string jsonData = DataController.ChangeJsonFromData(apps);
+            Debug.Log($"save jsonData:{jsonData}");
             DataController.SaveJson(jsonData);
         }
 
@@ -714,10 +717,10 @@ namespace Controllers
             {
                 case MenuType.IndividualDelete:
                     //選択中のアプリを削除
-                    _apps.RemoveAt(_appWindowsManager.GetSelectAppNumber());
+                    apps.RemoveAt(_appWindowsManager.GetSelectAppNumber());
                     SaveApplication();
                     _appWindowsManager.ResetAppInstants();
-                    foreach (App app in _apps)
+                    foreach (App app in apps)
                     {
                         CreateAppWindow(app);
                     }
@@ -759,10 +762,10 @@ namespace Controllers
             //ゲームカテゴリをセット
             _setGameCategory = ExchangeGameCategoryFromInt(_gameCategoryDropDownOnEdit.GetComponent<Dropdown>().value);
 
-            _apps[_appWindowsManager.GetSelectAppNumber()].FileName = _setFileName;
-            _apps[_appWindowsManager.GetSelectAppNumber()].ImageFileName = _setImageFileName;
-            _apps[_appWindowsManager.GetSelectAppNumber()].GameName = _setGameTitle;
-            _apps[_appWindowsManager.GetSelectAppNumber()].GameCategory = _setGameCategory;
+            apps[_appWindowsManager.GetSelectAppNumber()].FileName = _setFileName;
+            apps[_appWindowsManager.GetSelectAppNumber()].ImageFileName = _setImageFileName;
+            apps[_appWindowsManager.GetSelectAppNumber()].GameName = _setGameTitle;
+            apps[_appWindowsManager.GetSelectAppNumber()].GameCategory = _setGameCategory;
             SaveApplication();
 
             BackTo();
@@ -781,7 +784,7 @@ namespace Controllers
 
             //ゲームカテゴリをセット
             _setGameCategory = ExchangeGameCategoryFromInt(_gameCategoryDropdown.GetComponent<Dropdown>().value);
-            _apps.Add(new App(_setGameTitle, _setFileName, _setImageFileName, _setGameCategory));
+            apps.Add(new App(_setGameTitle, _setFileName, _setImageFileName, _setGameCategory));
 
             //作成したデータの保存
             SaveApplication();
@@ -829,7 +832,7 @@ namespace Controllers
             //Debug.Log(_setFileName);
             if (_isEdit)
             {
-                fileSelectButtonText.text = _apps[_appWindowsManager.GetSelectAppNumber()].FileName;
+                fileSelectButtonText.text = apps[_appWindowsManager.GetSelectAppNumber()].FileName;
             }
 
             if (fileNames.Length <= 0 || fileNames[0] == null)
@@ -837,7 +840,7 @@ namespace Controllers
                 Debug.Log("null");
                 _setFileName = "";
                 fileSelectButtonText.text =
-                    _isEdit ? _apps[_appWindowsManager.GetSelectAppNumber()].FileName : "ゲームのexeファイルを選択してください";
+                    _isEdit ? apps[_appWindowsManager.GetSelectAppNumber()].FileName : "ゲームのexeファイルを選択してください";
             }
             else
             {
@@ -846,7 +849,7 @@ namespace Controllers
                 {
                     _setFileName = "";
                     fileSelectButtonText.text =
-                        _isEdit ? _apps[_appWindowsManager.GetSelectAppNumber()].FileName : "ゲームのexeファイルを選択してください";
+                        _isEdit ? apps[_appWindowsManager.GetSelectAppNumber()].FileName : "ゲームのexeファイルを選択してください";
                 }
                 else
                 {
@@ -972,7 +975,7 @@ namespace Controllers
 
         public void DeleteApplication()
         {
-            _apps = new List<App>();
+            apps = new List<App>();
             SaveApplication();
             BackTo();
         }
@@ -1004,16 +1007,16 @@ namespace Controllers
                 SpriteEditor.SpriteFromFile(_appWindowsManager.GetSelectAppImageFileName());
             _currentMenuType = MenuType.Edit;
 
-            _setFileName = _apps[_appWindowsManager.GetSelectAppNumber()].FileName;
+            _setFileName = apps[_appWindowsManager.GetSelectAppNumber()].FileName;
             _setImageFileName = _appWindowsManager.GetSelectAppImageFileName();
             _setGameTitle = _appWindowsManager.GetSelectAppTitle();
-            _setGameCategory = _apps[_appWindowsManager.GetSelectAppNumber()].GameCategory;
+            _setGameCategory = apps[_appWindowsManager.GetSelectAppNumber()].GameCategory;
             _fileSelectButtonTextOnEdit.GetComponent<Text>().text = _setFileName;
             _imageFileSelectButtonTextOnEdit.GetComponent<Text>().text = _setImageFileName;
             _titleNameEnterOnEdit.GetComponent<InputField>().text = _setGameTitle;
             //DropDownのやつも元に戻すこと
             _gameCategoryDropDownOnEdit.GetComponent<Dropdown>().value =
-                (int) _apps[_appWindowsManager.GetSelectAppNumber()].GameCategory;
+                (int) apps[_appWindowsManager.GetSelectAppNumber()].GameCategory;
 
             _firstSelectButtonOnEdit.Select();
             _firstSelectButtonOnEdit.OnSelect(null);

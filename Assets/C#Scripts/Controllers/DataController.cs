@@ -8,7 +8,9 @@ namespace Controllers
     {
         private const string FileName = "appEx.json";
 
-        private const string FileDirectory = "Assets/StreamingAssets/data/";
+        private const string FileDirectory = "data/";
+
+        private const string UnityEditorDirectory = "Assets/StreamingAssets/";
 
         /// <summary>
         /// 与えられたデータをjsonに変換します
@@ -52,6 +54,9 @@ namespace Controllers
         {
             if (!Directory.Exists(FileDirectory)) Directory.CreateDirectory(FileDirectory);
             string saveDataPath = Path.Combine(FileDirectory, FileName);
+#if UNITY_EDITOR
+            saveDataPath = Path.Combine(UnityEditorDirectory, saveDataPath);
+#endif
             //append引数はtrue追記，false上書き
             StreamWriter writer = new StreamWriter(saveDataPath, false);
             writer.Write(jsonData);
@@ -66,6 +71,9 @@ namespace Controllers
         public static string LoadJson()
         {
             string saveDataPath = Path.Combine(FileDirectory, FileName);
+#if UNITY_EDITOR
+            saveDataPath = Path.Combine(UnityEditorDirectory, saveDataPath);
+#endif
             if (File.Exists(saveDataPath))
             {
                 FileStream fileStream = File.Open(saveDataPath, FileMode.Open);

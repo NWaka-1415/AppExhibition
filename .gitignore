@@ -7,3 +7,5 @@ Assets/Plugins/
 .idea/
 *.csproj
 *.docx
+Assets/StreamingAssets/
+Assets/StreamingAssets.meta
