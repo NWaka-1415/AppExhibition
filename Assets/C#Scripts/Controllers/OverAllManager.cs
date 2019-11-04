@@ -146,6 +146,19 @@ namespace Controllers
             }
         }
 
+        [Serializable]
+        class Data
+        {
+            [SerializeField] private List<App> apps;
+
+            public List<App> Apps => apps;
+            
+            public Data(List<App> apps)
+            {
+                this.apps = apps;
+            }
+        }
+        
         private void Awake()
         {
             if (_instance == null) _instance = this;
@@ -562,7 +575,11 @@ namespace Controllers
                         ExchangeGameCategoryFromInt(gameCategories[i])));
                 }
             }
-            else apps = DataController.ChangeDataFromJson<List<App>>(jsonData);
+            else
+            {
+                Data data = DataController.ChangeDataFromJson<Data>(jsonData);
+                apps = data.Apps;
+            }
         }
 
         void SaveApplication()
@@ -589,7 +606,7 @@ namespace Controllers
             PlayerPrefsX.SetIntArray("GameCategories", gameCategories);
             PlayerPrefs.SetString("Password", PasswordController.Password);
 
-            string jsonData = DataController.ChangeJsonFromData(apps);
+            string jsonData = DataController.ChangeJsonFromData(new Data(apps));
             Debug.Log($"save jsonData:{jsonData}");
             DataController.SaveJson(jsonData);
         }
