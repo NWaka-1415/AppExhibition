@@ -1,4 +1,6 @@
+using System;
 using System.IO;
+using UnityEngine;
 
 namespace Controllers
 {
@@ -7,6 +9,40 @@ namespace Controllers
         private const string FileName = ".json";
 
         private const string FileDirectory = "Assets/StreamingAssets/data/";
+
+        /// <summary>
+        /// 与えられたデータをjsonに変換します
+        /// </summary>
+        /// <param name="data"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns>jsonデータ:string</returns>
+        public static string ChangeJsonFromData<T>(T data)
+        {
+            if (data == null) return null;
+            return JsonUtility.ToJson(data);
+        }
+
+        /// <summary>
+        /// jsonデータをT型(任意のオブジェクト)オブジェクトに変換します
+        /// </summary>
+        /// <param name="jsonData"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns>データの内容:T型(任意のオブジェクト)</returns>
+        public static T ChangeDataFromJson<T>(string jsonData)
+        {
+            T data;
+            try
+            {
+                data = JsonUtility.FromJson<T>(jsonData);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+                throw;
+            }
+
+            return data;
+        }
 
         /// <summary>
         /// json形式のデータを書き込みます。
@@ -33,7 +69,7 @@ namespace Controllers
             if (File.Exists(saveDataPath))
             {
                 FileStream fileStream = File.Open(saveDataPath, FileMode.Open);
-                StreamReader reader=new StreamReader(fileStream);
+                StreamReader reader = new StreamReader(fileStream);
                 string jsonData = reader.ReadToEnd();
                 reader.Close();
                 fileStream.Close();
