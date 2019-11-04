@@ -6,7 +6,7 @@ namespace Controllers
 {
     public static class DataController
     {
-        private const string FileName = ".json";
+        private const string FileName = "appEx.json";
 
         private const string FileDirectory = "Assets/StreamingAssets/data/";
 
