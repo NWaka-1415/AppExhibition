@@ -586,6 +586,9 @@ namespace Controllers
             PlayerPrefsX.SetStringArray("AppImageFileNames", gameImageFileNames);
             PlayerPrefsX.SetIntArray("GameCategories", gameCategories);
             PlayerPrefs.SetString("Password", PasswordController.Password);
+
+            string jsonData = DataController.ChangeJsonFromData(_apps);
+            DataController.SaveJson(jsonData);
         }
 
         public void MoveToHomeFromWelcomes()
