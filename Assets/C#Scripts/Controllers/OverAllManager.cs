@@ -113,6 +113,21 @@ namespace Controllers
                 this.gameCategory = gameCategory;
             }
 
+            public string ChangeJson()
+            {
+                return CreateJson(this);
+            }
+
+            public static string CreateJson(App app)
+            {
+                return JsonUtility.ToJson(app);
+            }
+
+            public static App CreateAppFromJson(string json)
+            {
+                return JsonUtility.FromJson<App>(json);
+            }
+
             [SerializeField] private string gameName;
 
             public string GameName
