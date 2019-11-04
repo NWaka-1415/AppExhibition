@@ -7,8 +7,8 @@ using UnityEngine.UI;
 
 public class Buttons : MonoBehaviour
 {
-    private OverAllManager.State _previousState;
-    [SerializeField] private OverAllManager.State _state;
+    private Enums.State _previousState;
+    [SerializeField] private Enums.State _state;
     [SerializeField] private OverAllManager.MenuTypes _menuTypes;
     [SerializeField] private Color _color;
     [SerializeField] private Color _colorInSelect;
@@ -29,16 +29,16 @@ public class Buttons : MonoBehaviour
             {
                 switch (_state)
                 {
-                    case OverAllManager.State.Select:
+                    case Enums.State.Select:
                         _image.color = _color;
                         break;
-                    case OverAllManager.State.Unselect:
+                    case Enums.State.Unselect:
                         _image.color = _colorInSelect;
                         break;
                 }
             }
 
-        if (_state == OverAllManager.State.Select)
+        if (_state == Enums.State.Select)
         {
             if (Input.GetButtonDown("Ok"))
             {
@@ -46,7 +46,7 @@ public class Buttons : MonoBehaviour
         }
     }
 
-    public OverAllManager.State State
+    public Enums.State State
     {
         get { return _state; }
         set

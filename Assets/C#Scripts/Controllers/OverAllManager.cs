@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using Enums;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -1022,12 +1023,6 @@ namespace Controllers
             Music,
             Application,
             Others
-        }
-
-        public enum State
-        {
-            Select,
-            Unselect
         }
 
         public enum MenuTypes

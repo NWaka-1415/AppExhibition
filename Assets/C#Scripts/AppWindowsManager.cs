@@ -110,10 +110,10 @@ public class AppWindowsManager : MonoBehaviour
         {
             //以前選択状態だったものを非選択状態に
             _appWidowInstants[_previousSelectNumber].GetComponent<ApplicationWindow>()
-                .State = OverAllManager.State.Unselect;
+                .State = Enums.State.Unselect;
             //今回選択状態になったものを選択状態に
             _appWidowInstants[_selectedNumber].GetComponent<ApplicationWindow>()
-                .State = OverAllManager.State.Select;
+                .State = Enums.State.Select;
 
             MoveAppWindow();
 
@@ -131,7 +131,7 @@ public class AppWindowsManager : MonoBehaviour
 
         if (_appWidowInstants.Count == 0) return;
 
-        _appWidowInstants[0].GetComponent<ApplicationWindow>().State = OverAllManager.State.Select;
+        _appWidowInstants[0].GetComponent<ApplicationWindow>().State = Enums.State.Select;
         _appWidowInstants[0].GetComponent<ApplicationWindow>().MoveWindow(DefaultPos);
 
         _previousSelectNumber = 0;
@@ -143,8 +143,8 @@ public class AppWindowsManager : MonoBehaviour
 
         for (int i = 1; i < _appWidowInstants.Count; i++)
         {
-            _appWidowInstants[i].GetComponent<ApplicationWindow>().State = OverAllManager.State.Select;
-            _appWidowInstants[i].GetComponent<ApplicationWindow>().State = OverAllManager.State.Unselect;
+            _appWidowInstants[i].GetComponent<ApplicationWindow>().State = Enums.State.Select;
+            _appWidowInstants[i].GetComponent<ApplicationWindow>().State = Enums.State.Unselect;
             _appWidowInstants[i].GetComponent<ApplicationWindow>().MoveWindow(
                 DefaultPos + new Vector2(SelectBetweenUnselectRight + UnselectBetweenUnselect * (i - 1), 0f));
             //Debug.Log(_appWidowInstants[i].transform.localPosition.x + "=" + DefaultPos.x + "+" +
@@ -217,7 +217,7 @@ public class AppWindowsManager : MonoBehaviour
         if (_appWidowInstants.Count == 0) return "";
         foreach (GameObject appWidowInstant in _appWidowInstants)
         {
-            if (appWidowInstant.GetComponent<ApplicationWindow>().State == OverAllManager.State.Select)
+            if (appWidowInstant.GetComponent<ApplicationWindow>().State == Enums.State.Select)
                 return appWidowInstant.GetComponent<ApplicationWindow>().GameImage;
         }
 

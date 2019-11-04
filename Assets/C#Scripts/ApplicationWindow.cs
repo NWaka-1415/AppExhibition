@@ -13,8 +13,8 @@ public class ApplicationWindow : MonoBehaviour
     [SerializeField] private GameObject _appImage;
     [SerializeField] private GameObject _appStartMessage;
     private Animator _animator;
-    private OverAllManager.State _previousState; //以前の状態
-    private OverAllManager.State _state; //今の状態
+    private Enums.State _previousState; //以前の状態
+    private Enums.State _state; //今の状態
 
     private Vector2 _size;
 
@@ -38,14 +38,14 @@ public class ApplicationWindow : MonoBehaviour
         }
 
         if (OverAllManager.MenuType != OverAllManager.MenuTypes.Home) return;
-        if (_previousState == OverAllManager.State.Unselect && _state == OverAllManager.State.Select)
+        if (_previousState == Enums.State.Unselect && _state == Enums.State.Select)
         {
             //非選択状態から選択状態への遷移
             _animator.SetBool("SelectToUnselect", false);
             _animator.SetBool("UnselectToSelect", true);
             _previousState = _state;
         }
-        else if (_previousState == OverAllManager.State.Select && _state == OverAllManager.State.Unselect)
+        else if (_previousState == Enums.State.Select && _state == Enums.State.Unselect)
         {
             //選択状態から非選択状態への遷移
             _animator.SetBool("UnselectToSelect", false);
@@ -56,12 +56,12 @@ public class ApplicationWindow : MonoBehaviour
         if (Input.GetButtonDown("Submit"))
         {
             Debug.Log("Pressed Ok");
-            if (_state == OverAllManager.State.Select) Execute();
+            if (_state == Enums.State.Select) Execute();
         }
     }
 
     public void Initialize(OverAllManager overAllManager, string gameName, string exeFileName, string imageFileName,
-        OverAllManager.GameCategory gameCategory, OverAllManager.State state)
+        OverAllManager.GameCategory gameCategory, Enums.State state)
     {
         _overAllManager = overAllManager;
         _gameName = gameName;
@@ -164,7 +164,7 @@ public class ApplicationWindow : MonoBehaviour
         get { return _size; }
     }
 
-    public OverAllManager.State State
+    public Enums.State State
     {
         get { return _state; }
         set
