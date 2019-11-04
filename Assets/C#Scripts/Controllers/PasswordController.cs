@@ -7,10 +7,7 @@ namespace Controllers
     {
         private static PasswordController _instance = null;
 
-        public static PasswordController Instance
-        {
-            get { return _instance; }
-        }
+        public static PasswordController Instance => _instance;
 
         [SerializeField] private InputField passwordSetInputField = null;
         [SerializeField] private InputField passwordSetCheckInputField = null;

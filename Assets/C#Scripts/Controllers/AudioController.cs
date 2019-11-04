@@ -20,10 +20,7 @@ namespace Controllers
 
         private static AudioController _instance = null;
 
-        public static AudioController Instance
-        {
-            get { return _instance; }
-        }
+        public static AudioController Instance => _instance;
 
         private void Awake()
         {

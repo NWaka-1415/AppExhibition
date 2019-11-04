@@ -191,13 +191,10 @@ namespace Controllers
 
         public GameObject AppWidowInstants
         {
-            set { _appWidowInstants.Add(value); }
+            set => _appWidowInstants.Add(value);
         }
 
-        public bool IsExecute
-        {
-            get { return _isExecute; }
-        }
+        public bool IsExecute => _isExecute;
 
         public string GetSelectAppTitle()
         {

@@ -48,7 +48,7 @@ public class Buttons : MonoBehaviour
 
     public Enums.State State
     {
-        get { return _state; }
+        get => _state;
         set
         {
             _previousState = _state;

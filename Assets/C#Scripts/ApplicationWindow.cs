@@ -80,8 +80,6 @@ public class ApplicationWindow : MonoBehaviour
         _executeFlag = false;
 
         SetUpProc();
-//        _proc.Start();
-//        ForceExit();
     }
 
     public void MoveWindow(Vector2 vector2)
@@ -134,39 +132,21 @@ public class ApplicationWindow : MonoBehaviour
         Debug.Log("<color=blue>" + _gameName + "LocalPos:" + transform.localPosition + "</color>");
     }
 
-    public GameObject AppImage
-    {
-        get { return _appImage; }
-    }
+    public GameObject AppImage => _appImage;
 
-    public GameObject AppStartMessage
-    {
-        get { return _appStartMessage; }
-    }
+    public GameObject AppStartMessage => _appStartMessage;
 
-    public string GameName
-    {
-        get { return _gameName; }
-    }
+    public string GameName => _gameName;
 
-    public string GameImage
-    {
-        get { return _gameImage; }
-    }
+    public string GameImage => _gameImage;
 
-    public Enums.GameCategory GameCategory
-    {
-        get { return _gameCategory; }
-    }
+    public Enums.GameCategory GameCategory => _gameCategory;
 
-    public Vector2 Size
-    {
-        get { return _size; }
-    }
+    public Vector2 Size => _size;
 
     public Enums.State State
     {
-        get { return _state; }
+        get => _state;
         set
         {
             _previousState = this._state;
@@ -174,8 +154,5 @@ public class ApplicationWindow : MonoBehaviour
         }
     }
 
-    public bool ExecuteFlag
-    {
-        get { return _executeFlag; }
-    }
+    public bool ExecuteFlag => _executeFlag;
 }
