@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Enums;
+using SFB;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -800,16 +801,15 @@ namespace Controllers
 
             Cursor.visible = true;
 
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-
-            openFileDialog.Filter = "exeファイル|*.exe";
-
-            openFileDialog.CheckFileExists = false;
-
             _eventSystem.enabled = false;
             _openDialogFlag = true;
 
-            openFileDialog.ShowDialog();
+            ExtensionFilter[] extensionFilters = new[]
+            {
+                new ExtensionFilter("exeファイル", "exe")
+            };
+
+            string[] fileNames = StandaloneFileBrowser.OpenFilePanel("Choose exe File", "", extensionFilters, false);
 
             _eventSystem.enabled = true;
             _openDialogFlag = false;
@@ -823,7 +823,6 @@ namespace Controllers
                 _firstSelectButtonOnEdit.Select();
                 _firstSelectButtonOnEdit.OnSelect(null);
             }
-            //GameObject.Find("FileSelectButton").GetComponent<Button>().Select();
 
             Debug.Log("ShowDialog Off");
             Cursor.visible = false;
@@ -834,7 +833,7 @@ namespace Controllers
                 fileSelectButtonText.text = _apps[_appWindowsManager.GetSelectAppNumber()].FileName;
             }
 
-            if (openFileDialog.FileName == null)
+            if (fileNames.Length <= 0 || fileNames[0] == null)
             {
                 Debug.Log("null");
                 _setFileName = "";
@@ -844,8 +843,7 @@ namespace Controllers
             else
             {
                 Debug.Log("Not null");
-                Debug.Log(openFileDialog.FileName);
-                if (openFileDialog.FileName == "")
+                if (fileNames[0] == "")
                 {
                     _setFileName = "";
                     fileSelectButtonText.text =
@@ -853,13 +851,11 @@ namespace Controllers
                 }
                 else
                 {
-                    _setFileName = openFileDialog.FileName;
+                    _setFileName = fileNames[0];
                     Debug.Log("SetFile:" + _setFileName);
                     fileSelectButtonText.text = _setFileName;
                 }
             }
-
-            openFileDialog.Reset();
         }
 
         public void OpenImageFile()
@@ -869,16 +865,17 @@ namespace Controllers
 
             Cursor.visible = true;
 
-            OpenFileDialog openFileDialog1 = new OpenFileDialog();
-
-            openFileDialog1.Filter = "pngファイル|*.png";
-
-            openFileDialog1.CheckFileExists = false;
-
             _openDialogFlag = true;
             _eventSystem.enabled = false;
 
-            openFileDialog1.ShowDialog();
+            ExtensionFilter[] extensionFilters = new[]
+            {
+                new ExtensionFilter("imageファイル", "png", "jpg")
+            };
+
+            string[] imageFileNames =
+                StandaloneFileBrowser.OpenFilePanel("Choose exe File", "", extensionFilters, false);
+
 
             _eventSystem.enabled = true;
             _openDialogFlag = false;
@@ -891,7 +888,7 @@ namespace Controllers
 
             if (_isEdit) imageFileSelectButtonText.text = _appWindowsManager.GetSelectAppImageFileName();
 
-            if (openFileDialog1.FileName == null)
+            if (imageFileNames.Length <= 0 || imageFileNames[0] == null)
             {
                 Debug.Log("null");
                 _setImageFileName = _isEdit ? _appWindowsManager.GetSelectAppImageFileName() : "";
@@ -901,7 +898,7 @@ namespace Controllers
             else
             {
                 Debug.Log("not null");
-                if (openFileDialog1.FileName == "")
+                if (imageFileNames[0] == "")
                 {
                     _setImageFileName = _isEdit ? _appWindowsManager.GetSelectAppImageFileName() : "";
                     imageFileSelectButtonText.text =
@@ -909,13 +906,11 @@ namespace Controllers
                 }
                 else
                 {
-                    _setImageFileName = openFileDialog1.FileName;
+                    _setImageFileName = imageFileNames[0];
                     Debug.Log("setImg:" + _setImageFileName);
                     imageFileSelectButtonText.text = _setImageFileName;
                 }
             }
-
-            openFileDialog1.Reset();
         }
 
         public void OnValueChanged(string result)
