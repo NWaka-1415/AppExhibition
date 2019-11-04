@@ -85,8 +85,8 @@ namespace Controllers
 
         //==========================================-=-=
         private MenuType _currentMenuType;
-        public  MenuType CurrentMenuType => _currentMenuType;
-        
+        public MenuType CurrentMenuType => _currentMenuType;
+
         private Vector2 _prevDPad;
 
         private bool _openDialogFlag; //Dialogを開いていたらTrue おそらくもう不要
@@ -102,23 +102,48 @@ namespace Controllers
 
         private MenuType _willMenuType;
 
+        [Serializable]
         class App
         {
             public App(string gameName, string fileName, string imageFileName, GameCategory gameCategory)
             {
-                GameName = gameName;
-                FileName = fileName;
-                ImageFileName = imageFileName;
-                GameCategory = gameCategory;
+                this.gameName = gameName;
+                this.fileName = fileName;
+                this.imageFileName = imageFileName;
+                this.gameCategory = gameCategory;
             }
 
-            public string GameName { get; set; }
+            [SerializeField] private string gameName;
 
-            public string FileName { get; set; }
+            public string GameName
+            {
+                get => gameName;
+                set => gameName = value;
+            }
 
-            public string ImageFileName { get; set; }
+            [SerializeField] private string fileName;
 
-            public GameCategory GameCategory { get; set; }
+            public string FileName
+            {
+                get => fileName;
+                set => fileName = value;
+            }
+
+            [SerializeField] private string imageFileName;
+
+            public string ImageFileName
+            {
+                get => imageFileName;
+                set => imageFileName = value;
+            }
+
+            [SerializeField] private GameCategory gameCategory;
+
+            public GameCategory GameCategory
+            {
+                get => gameCategory;
+                set => gameCategory = value;
+            }
         }
 
         private void Awake()
