@@ -9,7 +9,7 @@ public class Buttons : MonoBehaviour
 {
     private Enums.State _previousState;
     [SerializeField] private Enums.State _state;
-    [SerializeField] private OverAllManager.MenuTypes _menuTypes;
+    [SerializeField] private Enums.MenuType _menuTypes;
     [SerializeField] private Color _color;
     [SerializeField] private Color _colorInSelect;
     private Image _image;
@@ -24,7 +24,7 @@ public class Buttons : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (OverAllManager.MenuType != this._menuTypes)
+        if (OverAllManager.Instance.CurrentMenuType != this._menuTypes)
             if (_previousState != _state)
             {
                 switch (_state)

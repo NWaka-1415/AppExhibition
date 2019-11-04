@@ -37,7 +37,7 @@ public class ApplicationWindow : MonoBehaviour
             _exitedFlag = false;
         }
 
-        if (OverAllManager.MenuType != OverAllManager.MenuTypes.Home) return;
+        if (OverAllManager.Instance.CurrentMenuType != Enums.MenuType.Home) return;
         if (_previousState == Enums.State.Unselect && _state == Enums.State.Select)
         {
             //非選択状態から選択状態への遷移

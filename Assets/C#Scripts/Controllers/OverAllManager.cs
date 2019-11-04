@@ -84,7 +84,9 @@ namespace Controllers
         private GameCategory _setGameCategory;
 
         //==========================================-=-=
-        private static MenuTypes _menuType;
+        private MenuType _currentMenuType;
+        public  MenuType CurrentMenuType => _currentMenuType;
+        
         private Vector2 _prevDPad;
 
         private bool _openDialogFlag; //Dialogを開いていたらTrue おそらくもう不要
@@ -92,11 +94,13 @@ namespace Controllers
         private bool _isEdit; //Editモードかどうか
 
         private int _selectingGameCategory; //選ばれているゲームカテゴリ
+        public int SelectingGameCategory => _selectingGameCategory;
+
         private int _previousSelectingGameCategory; //前フレームで選ばれていたゲームカテゴリ
 
         private bool _isShowWelcomePage;
 
-        private MenuTypes _willMenuType;
+        private MenuType _willMenuType;
 
         class App
         {
@@ -131,15 +135,15 @@ namespace Controllers
             Screen.SetResolution(1024, 576, FullScreenMode.FullScreenWindow);
 
             LoadApplication();
-            _menuType = _isShowWelcomePage ? MenuTypes.Welcome : MenuTypes.Home;
-            switch (_menuType)
+            _currentMenuType = _isShowWelcomePage ? MenuType.Welcome : MenuType.Home;
+            switch (_currentMenuType)
             {
-                case MenuTypes.Welcome:
+                case MenuType.Welcome:
                     _welcomePanel.SetActive(true);
                     _home.SetActive(false);
                     nextButtonOnWelcome.Select();
                     break;
-                case MenuTypes.Home:
+                case MenuType.Home:
                     _welcomePanel.SetActive(false);
                     _home.SetActive(true);
                     break;
@@ -185,7 +189,7 @@ namespace Controllers
         {
             if (_appWindowsManager.IsExecute) return;
 
-            if (_menuType == MenuTypes.Home)
+            if (_currentMenuType == MenuType.Home)
             {
                 _gameTitleObject.GetComponent<Text>().text = _appWindowsManager.GetSelectAppTitle();
                 //Debug.Log(_apps.Count);
@@ -202,7 +206,7 @@ namespace Controllers
             else if (Input.GetButtonDown("Y"))
             {
                 Debug.Log("Pressed Y");
-                if (_menuType == MenuTypes.Home)
+                if (_currentMenuType == MenuType.Home)
                 {
                     AudioController.Instance.Play(AudioController.AudioPattern.Select);
                     _home.SetActive(false);
@@ -210,7 +214,7 @@ namespace Controllers
                     //_appWindowsManager.ResetAppInstants();
                     _firstSelectButtonOnSetting.Select();
                     _firstSelectButtonOnSetting.OnSelect(null);
-                    _menuType = MenuTypes.Settings;
+                    _currentMenuType = MenuType.Settings;
                 }
             }
             else if (Input.GetButtonDown("Fire1"))
@@ -218,26 +222,26 @@ namespace Controllers
                 Debug.Log("Pressed Fire1");
                 //RB
                 AudioController.Instance.Play(AudioController.AudioPattern.Move);
-                if (_menuType == MenuTypes.Home) _selectingGameCategory = ChangeSelectingGameCategory(-1);
+                if (_currentMenuType == MenuType.Home) _selectingGameCategory = ChangeSelectingGameCategory(-1);
             }
             else if (Input.GetButtonDown("Fire2"))
             {
                 Debug.Log("Pressed Fire2");
                 //LB
                 AudioController.Instance.Play(AudioController.AudioPattern.Move);
-                if (_menuType == MenuTypes.Home) _selectingGameCategory = ChangeSelectingGameCategory(1);
+                if (_currentMenuType == MenuType.Home) _selectingGameCategory = ChangeSelectingGameCategory(1);
             }
             else if (Input.GetButtonDown("Menu"))
             {
-                if (_menuType == MenuTypes.Home && _apps.Count > 0)
+                if (_currentMenuType == MenuType.Home && _apps.Count > 0)
                 {
                     AudioController.Instance.Play(AudioController.AudioPattern.Open);
-                    _menuType = MenuTypes.Menu;
+                    _currentMenuType = MenuType.Menu;
                     MenuChange(); //Open
                 }
             }
 
-            if (_menuType == MenuTypes.Home)
+            if (_currentMenuType == MenuType.Home)
             {
                 /*
              * カテゴリー別タイトル入れ替え
@@ -290,7 +294,7 @@ namespace Controllers
             /*
          * -------------------------------------------------------------
          */
-            if (_menuType == MenuTypes.Home) return; //Homeであれば処理を終了
+            if (_currentMenuType == MenuType.Home) return; //Homeであれば処理を終了
 
 
             Vector2 dPad = new Vector2(Input.GetAxisRaw("Horizontal_DPad"), Input.GetAxisRaw("Vertical_DPad"));
@@ -375,28 +379,28 @@ namespace Controllers
 
         void BackTo()
         {
-            switch (_menuType)
+            switch (_currentMenuType)
             {
-                case MenuTypes.Add:
+                case MenuType.Add:
                     _addAppPanel.SetActive(false);
                     _deleteAppPanel.SetActive(false);
                     _home.SetActive(false);
                     _settingsPanel.SetActive(true);
                     _firstSelectButtonOnSetting.Select();
                     _firstSelectButtonOnSetting.OnSelect(null);
-                    _menuType = MenuTypes.Settings;
+                    _currentMenuType = MenuType.Settings;
                     ClearAddAppInfo();
                     break;
-                case MenuTypes.Delete:
+                case MenuType.Delete:
                     _home.SetActive(false);
                     _deleteAppPanel.SetActive(false);
                     _addAppPanel.SetActive(false);
                     _settingsPanel.SetActive(true);
                     _firstSelectButtonOnSetting.Select();
                     _firstSelectButtonOnSetting.OnSelect(null);
-                    _menuType = MenuTypes.Settings;
+                    _currentMenuType = MenuType.Settings;
                     break;
-                case MenuTypes.Settings:
+                case MenuType.Settings:
                     _appWindowsManager.ResetAppInstants();
                     foreach (App app in _apps)
                     {
@@ -408,13 +412,13 @@ namespace Controllers
                     _addAppPanel.SetActive(false);
                     _deleteAppPanel.SetActive(false);
                     _home.SetActive(true);
-                    _menuType = MenuTypes.Home;
+                    _currentMenuType = MenuType.Home;
                     break;
-                case MenuTypes.Menu:
-                    _menuType = MenuTypes.Home;
+                case MenuType.Menu:
+                    _currentMenuType = MenuType.Home;
                     MenuChange();
                     break;
-                case MenuTypes.IndividualDelete:
+                case MenuType.IndividualDelete:
                     //アプリケーション個別削除からホームに戻る
                     _appWindowsManager.ResetAppInstants();
                     foreach (App app in _apps)
@@ -426,9 +430,9 @@ namespace Controllers
                     _menu.SetActive(true);
                     _home.SetActive(true);
                     _dialogPanel.SetActive(false);
-                    _menuType = MenuTypes.Home;
+                    _currentMenuType = MenuType.Home;
                     break;
-                case MenuTypes.Edit:
+                case MenuType.Edit:
                     _appWindowsManager.ResetAppInstants();
                     foreach (App app in _apps)
                     {
@@ -440,27 +444,27 @@ namespace Controllers
                     _isEdit = false;
                     _home.SetActive(true);
                     _menu.SetActive(true);
-                    _menuType = MenuTypes.Home;
+                    _currentMenuType = MenuType.Home;
                     break;
-                case MenuTypes.PasswordSet:
+                case MenuType.PasswordSet:
                     _passwordSetPanel.SetActive(false);
                     _welcomePanel.SetActive(true);
                     nextButtonOnWelcome.Select();
                     break;
-                case MenuTypes.PasswordCheck:
+                case MenuType.PasswordCheck:
                     _passwordCheckPanel.SetActive(false);
                     PasswordController.Instance.ResetPassCheckField();
                     switch (_willMenuType)
                     {
-                        case MenuTypes.Add:
-                        case MenuTypes.Delete:
+                        case MenuType.Add:
+                        case MenuType.Delete:
                             _firstSelectButtonOnSetting.Select();
                             _firstSelectButtonOnSetting.OnSelect(null);
                             _settingsPanel.SetActive(true);
-                            _menuType = MenuTypes.Settings;
+                            _currentMenuType = MenuType.Settings;
                             break;
-                        case MenuTypes.IndividualDelete:
-                        case MenuTypes.Edit:
+                        case MenuType.IndividualDelete:
+                        case MenuType.Edit:
                             _appWindowsManager.ResetAppInstants();
                             foreach (App app in _apps)
                             {
@@ -470,12 +474,12 @@ namespace Controllers
                             _appWindowsManager.Initialize();
                             _home.SetActive(true);
                             _menu.SetActive(true);
-                            _menuType = MenuTypes.Home;
+                            _currentMenuType = MenuType.Home;
                             break;
                     }
 
                     break;
-                case MenuTypes.Welcome:
+                case MenuType.Welcome:
                     break;
             }
         }
@@ -557,7 +561,7 @@ namespace Controllers
 
         public void MoveToHomeFromWelcomes()
         {
-            _menuType = MenuTypes.Home;
+            _currentMenuType = MenuType.Home;
             _home.SetActive(true);
             _welcomePanel.SetActive(false);
             _passwordSetPanel.SetActive(false);
@@ -566,8 +570,8 @@ namespace Controllers
 
         public void SetMoveToAddApp()
         {
-            _willMenuType = MenuTypes.Add;
-            _menuType = MenuTypes.PasswordCheck;
+            _willMenuType = MenuType.Add;
+            _currentMenuType = MenuType.PasswordCheck;
             _settingsPanel.SetActive(false);
             _passwordCheckPanel.SetActive(true);
             firstSelectOnPassCheck.Select();
@@ -580,14 +584,14 @@ namespace Controllers
             _firstSelectButtonOnAdd.OnSelect(null);
             _settingsPanel.SetActive(false);
             _addAppPanel.SetActive(true);
-            _menuType = MenuTypes.Add;
-            _willMenuType = MenuTypes.None;
+            _currentMenuType = MenuType.Add;
+            _willMenuType = MenuType.None;
         }
 
         public void SetMoveToDeleteApp()
         {
-            _willMenuType = MenuTypes.Delete;
-            _menuType = MenuTypes.PasswordCheck;
+            _willMenuType = MenuType.Delete;
+            _currentMenuType = MenuType.PasswordCheck;
             _settingsPanel.SetActive(false);
             _passwordCheckPanel.SetActive(true);
             firstSelectOnPassCheck.Select();
@@ -599,8 +603,8 @@ namespace Controllers
             _firstSelectButtonOnDelete.OnSelect(null);
             _settingsPanel.SetActive(false);
             _deleteAppPanel.SetActive(true);
-            _menuType = MenuTypes.Delete;
-            _willMenuType = MenuTypes.None;
+            _currentMenuType = MenuType.Delete;
+            _willMenuType = MenuType.None;
         }
 
         public void CheckPass()
@@ -609,16 +613,16 @@ namespace Controllers
             PasswordController.Instance.ResetPassCheckField();
             switch (_willMenuType)
             {
-                case MenuTypes.Add:
+                case MenuType.Add:
                     MoveToAddApp();
                     break;
-                case MenuTypes.Delete:
+                case MenuType.Delete:
                     MoveToDeleteApp();
                     break;
-                case MenuTypes.IndividualDelete:
+                case MenuType.IndividualDelete:
                     OpenDialogWindow();
                     break;
-                case MenuTypes.Edit:
+                case MenuType.Edit:
                     EditApplication();
                     break;
             }
@@ -629,8 +633,8 @@ namespace Controllers
             MenuChange();
             _menu.SetActive(false);
             _home.SetActive(false);
-            _willMenuType = MenuTypes.IndividualDelete;
-            _menuType = MenuTypes.PasswordCheck;
+            _willMenuType = MenuType.IndividualDelete;
+            _currentMenuType = MenuType.PasswordCheck;
             _passwordCheckPanel.SetActive(true);
             firstSelectOnPassCheck.Select();
             firstSelectOnPassCheck.OnSelect(null);
@@ -640,9 +644,9 @@ namespace Controllers
         {
             //Dialogを開く
             //以前の画面に応じてDialogの種類を決定
-            switch (_menuType)
+            switch (_currentMenuType)
             {
-                case MenuTypes.Menu:
+                case MenuType.Menu:
                     //Menuから移ってくる場合はアプリ単体削除Dialog
                     MenuChange(); //isOpenをfalseに
                     _menu.SetActive(false);
@@ -651,9 +655,9 @@ namespace Controllers
                     _dialogIcon.sprite =
                         SpriteEditor.SpriteFromFile(_appWindowsManager.GetSelectAppImageFileName());
                     _dialogPanel.SetActive(true);
-                    _menuType = MenuTypes.IndividualDelete;
+                    _currentMenuType = MenuType.IndividualDelete;
                     break;
-                case MenuTypes.PasswordCheck:
+                case MenuType.PasswordCheck:
                     //アプリ単体削除Dialog
                     _menu.SetActive(false);
                     _home.SetActive(false);
@@ -661,7 +665,7 @@ namespace Controllers
                     _dialogIcon.sprite =
                         SpriteEditor.SpriteFromFile(_appWindowsManager.GetSelectAppImageFileName());
                     _dialogPanel.SetActive(true);
-                    _menuType = MenuTypes.IndividualDelete;
+                    _currentMenuType = MenuType.IndividualDelete;
                     break;
                 default:
                     break;
@@ -674,9 +678,9 @@ namespace Controllers
         public void OnClickedDialogOkButton()
         {
             //Dialog画面のOKボタンがクリックされた際の挙動
-            switch (_menuType)
+            switch (_currentMenuType)
             {
-                case MenuTypes.IndividualDelete:
+                case MenuType.IndividualDelete:
                     //選択中のアプリを削除
                     _apps.RemoveAt(_appWindowsManager.GetSelectAppNumber());
                     SaveApplication();
@@ -690,7 +694,7 @@ namespace Controllers
                     _menu.SetActive(true);
                     _home.SetActive(true);
                     _dialogPanel.SetActive(false);
-                    _menuType = MenuTypes.Home;
+                    _currentMenuType = MenuType.Home;
                     break;
                 default:
                     break;
@@ -705,7 +709,7 @@ namespace Controllers
 
         public void OnclickWelcomeToSetPass()
         {
-            _menuType = MenuTypes.PasswordSet;
+            _currentMenuType = MenuType.PasswordSet;
             _welcomePanel.SetActive(false);
             _passwordSetPanel.SetActive(true);
             firstSelectOnPassSet.Select();
@@ -950,8 +954,8 @@ namespace Controllers
         public void SetEditApplication()
         {
             MenuChange();
-            _willMenuType = MenuTypes.Edit;
-            _menuType = MenuTypes.PasswordCheck;
+            _willMenuType = MenuType.Edit;
+            _currentMenuType = MenuType.PasswordCheck;
             _menu.SetActive(false);
             _home.SetActive(false);
             _passwordCheckPanel.SetActive(true);
@@ -972,7 +976,7 @@ namespace Controllers
             _editIcon.color = new Color(255f, 255f, 255f, 255f); //一応
             _editIcon.sprite =
                 SpriteEditor.SpriteFromFile(_appWindowsManager.GetSelectAppImageFileName());
-            _menuType = MenuTypes.Edit;
+            _currentMenuType = MenuType.Edit;
 
             _setFileName = _apps[_appWindowsManager.GetSelectAppNumber()].FileName;
             _setImageFileName = _appWindowsManager.GetSelectAppImageFileName();
@@ -1011,10 +1015,6 @@ namespace Controllers
 
         public GameObject GameTitleObject => _gameTitleObject;
 
-        public int SelectingGameCategory => _selectingGameCategory;
-
-        public static MenuTypes MenuType => _menuType;
-
         public enum GameCategory
         {
             Action,
@@ -1025,19 +1025,19 @@ namespace Controllers
             Others
         }
 
-        public enum MenuTypes
-        {
-            Home,
-            Settings,
-            Add,
-            Delete,
-            Menu,
-            IndividualDelete,
-            Edit,
-            PasswordSet,
-            PasswordCheck,
-            Welcome,
-            None
-        }
+//        public enum MenuType
+//        {
+//            Home,
+//            Settings,
+//            Add,
+//            Delete,
+//            Menu,
+//            IndividualDelete,
+//            Edit,
+//            PasswordSet,
+//            PasswordCheck,
+//            Welcome,
+//            None
+//        }
     }
 }
