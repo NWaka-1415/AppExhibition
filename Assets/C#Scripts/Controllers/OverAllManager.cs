@@ -73,7 +73,7 @@ namespace Controllers
 
         private AppWindowsManager _appWindowsManager;
 
-        private List<App> _apps;
+        [SerializeField, HideInInspector] private List<App> _apps;
 
         /*
      * 設定でセットされた新しいゲーム（アプリ）の情報
@@ -111,21 +111,6 @@ namespace Controllers
                 this.fileName = fileName;
                 this.imageFileName = imageFileName;
                 this.gameCategory = gameCategory;
-            }
-
-            public string ChangeJson()
-            {
-                return CreateJson(this);
-            }
-
-            public static string CreateJson(App app)
-            {
-                return JsonUtility.ToJson(app);
-            }
-
-            public static App CreateAppFromJson(string json)
-            {
-                return JsonUtility.FromJson<App>(json);
             }
 
             [SerializeField] private string gameName;
@@ -556,22 +541,26 @@ namespace Controllers
 
         void LoadApplication()
         {
-            _apps = new List<App>();
-
-            string[] gameNames = PlayerPrefsX.GetStringArray("AppNames");
-            string[] gameFileNames = PlayerPrefsX.GetStringArray("AppFileNames");
-            string[] gameImageFileNames = PlayerPrefsX.GetStringArray("AppImageFileNames");
-            int[] gameCategories = PlayerPrefsX.GetIntArray("GameCategories");
-            PasswordController.Password = PlayerPrefs.GetString("Password", "");
-            _isShowWelcomePage = !PasswordController.SetPassword;
-
-            if (gameNames.Length == 0 || gameFileNames.Length == 0 || gameCategories.Length == 0) return;
-
-            for (int i = 0; i < gameNames.Length; i++)
+            string jsonData = DataController.LoadJson();
+            if (jsonData == null)
             {
-                _apps.Add(new App(gameNames[i], gameFileNames[i], gameImageFileNames[i],
-                    ExchangeGameCategoryFromInt(gameCategories[i])));
+                _apps = new List<App>();
+                string[] gameNames = PlayerPrefsX.GetStringArray("AppNames");
+                string[] gameFileNames = PlayerPrefsX.GetStringArray("AppFileNames");
+                string[] gameImageFileNames = PlayerPrefsX.GetStringArray("AppImageFileNames");
+                int[] gameCategories = PlayerPrefsX.GetIntArray("GameCategories");
+                PasswordController.Password = PlayerPrefs.GetString("Password", "");
+                _isShowWelcomePage = !PasswordController.SetPassword;
+
+                if (gameNames.Length == 0 || gameFileNames.Length == 0 || gameCategories.Length == 0) return;
+
+                for (int i = 0; i < gameNames.Length; i++)
+                {
+                    _apps.Add(new App(gameNames[i], gameFileNames[i], gameImageFileNames[i],
+                        ExchangeGameCategoryFromInt(gameCategories[i])));
+                }
             }
+            else _apps = DataController.ChangeDataFromJson<List<App>>(jsonData);
         }
 
         void SaveApplication()
