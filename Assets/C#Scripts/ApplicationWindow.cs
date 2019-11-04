@@ -21,7 +21,7 @@ public class ApplicationWindow : MonoBehaviour
     private string _gameName; //ゲームタイトル
     private string _exeFileName; //Fileの場所
     private string _gameImage; //ゲームのメインイメージ
-    private OverAllManager.GameCategory _gameCategory; //ゲームカテゴリ
+    private Enums.GameCategory _gameCategory; //ゲームカテゴリ
 
     Process _proc;
 
@@ -61,7 +61,7 @@ public class ApplicationWindow : MonoBehaviour
     }
 
     public void Initialize(OverAllManager overAllManager, string gameName, string exeFileName, string imageFileName,
-        OverAllManager.GameCategory gameCategory, Enums.State state)
+        Enums.GameCategory gameCategory, Enums.State state)
     {
         _overAllManager = overAllManager;
         _gameName = gameName;
@@ -154,7 +154,7 @@ public class ApplicationWindow : MonoBehaviour
         get { return _gameImage; }
     }
 
-    public OverAllManager.GameCategory GameCategory
+    public Enums.GameCategory GameCategory
     {
         get { return _gameCategory; }
     }

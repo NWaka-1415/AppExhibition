@@ -10,7 +10,7 @@ namespace Controllers
         private List<GameObject> _appWidowInstants;
         private int _selectedNumber;
         private int _previousSelectNumber;
-        private OverAllManager.GameCategory _previousGameCategory;
+        private Enums.GameCategory _previousGameCategory;
         private static readonly Vector2 DefaultPos = new Vector2(175f, -89.55002f);
         private const float SelectBetweenUnselectRight = 155f;
         private const float UnselectBetweenUnselect = 92.5f;

@@ -1014,15 +1014,5 @@ namespace Controllers
         public GameObject BackGround => _backGround;
 
         public GameObject GameTitleObject => _gameTitleObject;
-
-        public enum GameCategory
-        {
-            Action,
-            Shooting,
-            RPG,
-            Music,
-            Application,
-            Others
-        }
     }
 }
