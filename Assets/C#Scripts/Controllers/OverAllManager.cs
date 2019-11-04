@@ -1019,6 +1019,11 @@ namespace Controllers
             _firstSelectButtonOnEdit.OnSelect(null);
         }
 
+        public void Quit()
+        {
+            Application.Quit();
+        }
+
         public void AnimationGameCategory()
         {
             _gameCategoryAnimator.SetTrigger("Anim");
