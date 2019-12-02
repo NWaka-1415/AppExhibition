@@ -61,7 +61,7 @@ public class ApplicationWindow : MonoBehaviour
     }
 
     public void Initialize(OverAllManager overAllManager, string gameName, string exeFileName, string imageFileName,
-        Enums.GameCategory gameCategory, Enums.State state)
+        Enums.GameCategory gameCategory, Enums.State state, string gameArg = "", string gameInfo = "")
     {
         _overAllManager = overAllManager;
         _gameName = gameName;

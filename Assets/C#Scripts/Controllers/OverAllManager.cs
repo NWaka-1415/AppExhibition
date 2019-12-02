@@ -28,6 +28,9 @@ namespace Controllers
         [SerializeField] private GameObject _backGround; //バックグラウンドオブジェクト（ただの背景）
         [SerializeField] private GameObject _home; //Home画面のオブジェクトをまとめるからのオブジェクト
         [SerializeField] private GameObject _menu; //Home画面で表示されるメニューオブジェクト
+
+        #region GameObjectPanels
+
         [SerializeField] private GameObject _settingsPanel; //Settings画面のパネル
         [SerializeField] private GameObject _addAppPanel; //Add画面のパネル
         [SerializeField] private GameObject _deleteAppPanel; //Delete画面のパネル
@@ -36,21 +39,36 @@ namespace Controllers
         [SerializeField] private GameObject _passwordSetPanel = null;
         [SerializeField] private GameObject _passwordCheckPanel = null;
         [SerializeField] private GameObject _welcomePanel = null;
+
+        #endregion
+
+        #region ButtonTextOnAdd
+
         [SerializeField] private GameObject _fileSelectButtonText; //アプリケーションファイル選択ダイアログオープンボタンオブジェクト in Add
         [SerializeField] private GameObject _imageFileSelectButtonText; //イメージファイル選択ダイアログオープンボタンオブジェクト in Add
         [SerializeField] private GameObject _titleNameEnter; //ゲームタイトルインプットフィールドオブジェクト in Add
         [SerializeField] private GameObject _gameCategoryDropdown; //ゲームカテゴリドロップダウンオブジェクト in Add
+        [SerializeField] private Text argFileButtonText = null;
 
-        [SerializeField]
-        private GameObject _fileSelectButtonTextOnEdit; //Edit画面のアプリケーションファイル選択ダイアログオープンボタンオブジェクト in Edit
+        #endregion
 
-        [SerializeField]
-        private GameObject _imageFileSelectButtonTextOnEdit; //Edit画面のイメージファイル選択ダイアログオープンボタンオブジェクト in Edit
+
+        #region FileSetterButttonsTextOnEdit
+
+        //Edit画面のアプリケーションファイル選択ダイアログオープンボタンオブジェクト in Edit
+        [SerializeField] private GameObject _fileSelectButtonTextOnEdit;
+
+        //Edit画面のイメージファイル選択ダイアログオープンボタンオブジェクト in Edit
+        [SerializeField] private GameObject _imageFileSelectButtonTextOnEdit;
 
         [SerializeField] private GameObject _titleNameEnterOnEdit; //Edit画面のタイトル入力フィード
         [SerializeField] private GameObject _gameCategoryDropDownOnEdit; //Edit画面のカテゴリードロップダウンオブジェクト
+        [SerializeField] private Text argFileButtonTextOnEdit = null;
 
-        //Buttons
+        #endregion
+
+        #region Buttons
+
         [SerializeField] private Button _firstSelectButtonOnSetting; //最初に選択されているボタン in Setting
         [SerializeField] private Button _firstSelectButtonOnAdd; //最初に選択されているボタン in Add
         [SerializeField] private Button _firstSelectButtonOnDelete; //最初に選択されているボタン in Delete
@@ -59,6 +77,10 @@ namespace Controllers
         [SerializeField] private Button nextButtonOnWelcome;
         [SerializeField] private InputField firstSelectOnPassSet = null;
         [SerializeField] private InputField firstSelectOnPassCheck = null;
+
+        #endregion
+
+        #region OtherSerializeFieldMember
 
         //Animators
         [SerializeField] private Animator _gameCategoryAnimator; //ゲームカテゴリBackGroundのコンポーネント＜アニメーター＞
@@ -71,6 +93,8 @@ namespace Controllers
         [SerializeField] private Image _dialogIcon; //ダイアログ画面上のゲームアイコンオブジェクトのコンポーネント＜Image＞
         [SerializeField] private Image _editIcon; //Edit画面のゲームアイコンオブジェクトのコンポーネント＜Image＞
 
+        #endregion
+
         private AppWindowsManager _appWindowsManager;
 
         [SerializeField, HideInInspector] private List<App> apps;
@@ -78,10 +102,17 @@ namespace Controllers
         /*
      * 設定でセットされた新しいゲーム（アプリ）の情報
      */
+
+        #region settingTemp
+
         private string _setFileName;
         private string _setImageFileName;
         private string _setGameTitle;
         private GameCategory _setGameCategory;
+        private string _setGameArg;
+        private string _setGameInfo;
+
+        #endregion
 
         //==========================================-=-=
         private MenuType _currentMenuType;
@@ -105,12 +136,15 @@ namespace Controllers
         [Serializable]
         class App
         {
-            public App(string gameName, string fileName, string imageFileName, GameCategory gameCategory)
+            public App(string gameName, string fileName, string imageFileName, GameCategory gameCategory,
+                string argument = "", string information = "")
             {
                 this.gameName = gameName;
                 this.fileName = fileName;
                 this.imageFileName = imageFileName;
                 this.gameCategory = gameCategory;
+                this.argument = argument;
+                this.information = information;
             }
 
             [SerializeField] private string gameName;
@@ -144,6 +178,22 @@ namespace Controllers
                 get => gameCategory;
                 set => gameCategory = value;
             }
+
+            [SerializeField] private string argument;
+
+            public string Argument
+            {
+                get => argument;
+                set => argument = value;
+            }
+
+            [SerializeField] private string information;
+
+            public string Information
+            {
+                get => information;
+                set => information = value;
+            }
         }
 
         [Serializable]
@@ -152,13 +202,13 @@ namespace Controllers
             [SerializeField] private List<App> apps;
 
             public List<App> Apps => apps;
-            
+
             public Data(List<App> apps)
             {
                 this.apps = apps;
             }
         }
-        
+
         private void Awake()
         {
             if (_instance == null) _instance = this;
@@ -216,6 +266,8 @@ namespace Controllers
             _setFileName = "";
             _setGameTitle = "";
             _setGameCategory = GameCategory.Action;
+            _setGameArg = "";
+            _setGameInfo = "";
 
             _selectingGameCategory = -1;
             _previousSelectingGameCategory = _selectingGameCategory;
@@ -391,9 +443,10 @@ namespace Controllers
 
         void CreateAppWindow(App app)
         {
-            GameObject instantiateApplication = Instantiate(_appWindowsPrefabs, _home.transform);
-            instantiateApplication.GetComponent<ApplicationWindow>().Initialize(this, app.GameName, app.FileName,
-                app.ImageFileName, app.GameCategory, State.Unselect);
+            ApplicationWindow instantiateApplication =
+                Instantiate(_appWindowsPrefabs, _home.transform).GetComponent<ApplicationWindow>();
+            instantiateApplication.Initialize(this, app.GameName, app.FileName,
+                app.ImageFileName, app.GameCategory, State.Unselect, app.Argument, app.Information);
             _appWindowsManager.AppWidowInstants = instantiateApplication;
         }
 
@@ -564,15 +617,18 @@ namespace Controllers
                 string[] gameFileNames = PlayerPrefsX.GetStringArray("AppFileNames");
                 string[] gameImageFileNames = PlayerPrefsX.GetStringArray("AppImageFileNames");
                 int[] gameCategories = PlayerPrefsX.GetIntArray("GameCategories");
-                
+                string[] gameArgs = PlayerPrefsX.GetStringArray("GameArgs");
+                string[] gameInfo = PlayerPrefsX.GetStringArray("GameInfo");
+
                 _isShowWelcomePage = !PasswordController.SetPassword;
 
-                if (gameNames.Length == 0 || gameFileNames.Length == 0 || gameCategories.Length == 0) return;
+                if (gameNames.Length == 0 || gameFileNames.Length == 0 || gameCategories.Length == 0 ||
+                    gameArgs.Length == 0 || gameInfo.Length == 0) return;
 
                 for (int i = 0; i < gameNames.Length; i++)
                 {
                     apps.Add(new App(gameNames[i], gameFileNames[i], gameImageFileNames[i],
-                        ExchangeGameCategoryFromInt(gameCategories[i])));
+                        ExchangeGameCategoryFromInt(gameCategories[i]), gameArgs[i], gameInfo[i]));
                 }
             }
             else
@@ -588,6 +644,8 @@ namespace Controllers
             string[] gameFileNames = new string[apps.Count];
             string[] gameImageFileNames = new string[apps.Count];
             int[] gameCategories = new int[apps.Count];
+            string[] gameArgs = new string[apps.Count];
+            string[] gameInfo = new string[apps.Count];
 
             int i = 0;
 
@@ -597,6 +655,8 @@ namespace Controllers
                 gameFileNames[i] = app.FileName;
                 gameImageFileNames[i] = app.ImageFileName;
                 gameCategories[i] = (int) app.GameCategory;
+                gameArgs[i] = app.Argument;
+                gameInfo[i] = app.Information;
                 i++;
             }
 
@@ -604,6 +664,8 @@ namespace Controllers
             PlayerPrefsX.SetStringArray("AppFileNames", gameFileNames);
             PlayerPrefsX.SetStringArray("AppImageFileNames", gameImageFileNames);
             PlayerPrefsX.SetIntArray("GameCategories", gameCategories);
+            PlayerPrefsX.SetStringArray("GameArgs", gameArgs);
+            PlayerPrefsX.SetStringArray("GameInfo", gameInfo);
             PlayerPrefs.SetString("Password", PasswordController.Password);
 
             string jsonData = DataController.ChangeJsonFromData(new Data(apps));
@@ -611,6 +673,9 @@ namespace Controllers
             DataController.SaveJson(jsonData);
         }
 
+        /// <summary>
+        /// ウェルカム画面からホーム画面への遷移
+        /// </summary>
         public void MoveToHomeFromWelcomes()
         {
             _currentMenuType = MenuType.Home;
@@ -783,6 +848,8 @@ namespace Controllers
             apps[_appWindowsManager.GetSelectAppNumber()].ImageFileName = _setImageFileName;
             apps[_appWindowsManager.GetSelectAppNumber()].GameName = _setGameTitle;
             apps[_appWindowsManager.GetSelectAppNumber()].GameCategory = _setGameCategory;
+            apps[_appWindowsManager.GetSelectAppNumber()].Argument = _setGameArg;
+            apps[_appWindowsManager.GetSelectAppNumber()].Information = _setGameInfo;
             SaveApplication();
 
             BackTo();
@@ -801,7 +868,8 @@ namespace Controllers
 
             //ゲームカテゴリをセット
             _setGameCategory = ExchangeGameCategoryFromInt(_gameCategoryDropdown.GetComponent<Dropdown>().value);
-            apps.Add(new App(_setGameTitle, _setFileName, _setImageFileName, _setGameCategory));
+            apps.Add(new App(_setGameTitle, _setFileName, _setImageFileName, _setGameCategory, _setGameArg,
+                _setGameInfo));
 
             //作成したデータの保存
             SaveApplication();
@@ -881,6 +949,7 @@ namespace Controllers
         {
             if (_openDialogFlag) return;
             _setImageFileName = "";
+            if (_isEdit) _setImageFileName = _appWindowsManager.GetSelectAppImageFileName();
 
             Cursor.visible = true;
 
@@ -893,7 +962,7 @@ namespace Controllers
             };
 
             string[] imageFileNames =
-                StandaloneFileBrowser.OpenFilePanel("Choose exe File", "", extensionFilters, false);
+                StandaloneFileBrowser.OpenFilePanel("Choose image File", "", extensionFilters, false);
 
 
             _eventSystem.enabled = true;
@@ -928,6 +997,59 @@ namespace Controllers
                     _setImageFileName = imageFileNames[0];
                     Debug.Log("setImg:" + _setImageFileName);
                     imageFileSelectButtonText.text = _setImageFileName;
+                }
+            }
+        }
+
+        public void OpenArgsFile()
+        {
+            if (_openDialogFlag) return;
+
+            Cursor.visible = true;
+
+            _openDialogFlag = true;
+            _eventSystem.enabled = false;
+
+            ExtensionFilter[] extensionFilters = new[]
+            {
+                new ExtensionFilter("引数として実行させるファイル", "*")
+            };
+
+            string[] argsNames =
+                StandaloneFileBrowser.OpenFilePanel("Choose a File", "", extensionFilters, false);
+
+            _eventSystem.enabled = true;
+            _openDialogFlag = false;
+
+            Text argSelectText = argFileButtonText;
+            if (_isEdit) argSelectText = argFileButtonTextOnEdit;
+//            GameObject.Find("ImageFileSelectButton").GetComponent<Button>().Select();
+
+            Cursor.visible = false;
+
+            if (_isEdit) argFileButtonText.text = _appWindowsManager.GetSelectAppImageFileName();
+
+            if (argsNames.Length <= 0 || argsNames[0] == null)
+            {
+                Debug.Log("null");
+                _setGameArg = _isEdit ? _appWindowsManager.GetSelectAppImageFileName() : "";
+                argSelectText.text =
+                    _isEdit ? _appWindowsManager.GetSelectAppImageFileName() : "ゲームアイコンのpngファイルを選択してください";
+            }
+            else
+            {
+                Debug.Log("not null");
+                if (argsNames[0] == "")
+                {
+                    _setGameArg = _isEdit ? _appWindowsManager.GetSelectAppImageFileName() : "";
+                    argSelectText.text =
+                        _isEdit ? _appWindowsManager.GetSelectAppImageFileName() : "ゲームアイコンのpngファイルを選択してください";
+                }
+                else
+                {
+                    _setGameArg = argsNames[0];
+                    Debug.Log("setArg:" + _setImageFileName);
+                    argSelectText.text = _setGameArg;
                 }
             }
         }

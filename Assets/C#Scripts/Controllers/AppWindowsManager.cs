@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Enums;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,7 +8,7 @@ namespace Controllers
     public class AppWindowsManager : MonoBehaviour
     {
         //アプリウィンドウオブジェクトを管理するクラス
-        private List<GameObject> _appWidowInstants;
+        private List<ApplicationWindow> _appWidowInstants;
         private int _selectedNumber;
         private int _previousSelectNumber;
         private Enums.GameCategory _previousGameCategory;
@@ -27,15 +28,16 @@ namespace Controllers
             //Homeじゃなければ処理終了
             if (_appWidowInstants.Count == 0) return;
 
-            if (_appWidowInstants[_selectedNumber].GetComponent<ApplicationWindow>().GameCategory != _previousGameCategory)
+            if (_appWidowInstants[_selectedNumber].GameCategory != _previousGameCategory)
             {
                 //ゲームカテゴリの表示を変更(未完，本来はアイコンも変更)
-                _previousGameCategory = _appWidowInstants[_selectedNumber].GetComponent<ApplicationWindow>().GameCategory;
-                OverAllManager.Instance.SetCategoryIcon(0, OverAllManager.Instance.ExchangeIntFromGameCategory(_previousGameCategory));
+                _previousGameCategory = _appWidowInstants[_selectedNumber].GameCategory;
+                OverAllManager.Instance.SetCategoryIcon(0,
+                    OverAllManager.Instance.ExchangeIntFromGameCategory(_previousGameCategory));
             }
 
             //アプリが起動したときの動作
-            if (_appWidowInstants[_selectedNumber].GetComponent<ApplicationWindow>().ExecuteFlag)
+            if (_appWidowInstants[_selectedNumber].ExecuteFlag)
             {
                 _isExecute = true;
                 //背景OFF
@@ -49,11 +51,11 @@ namespace Controllers
                     OverAllManager.Instance.SetImageAlpha(i, 0f);
                 }
 
-                foreach (GameObject appWidowInstant in _appWidowInstants)
+                foreach (ApplicationWindow appWidowInstant in _appWidowInstants)
                 {
-                    if (!appWidowInstant.GetComponent<ApplicationWindow>().ExecuteFlag)
+                    if (!appWidowInstant.ExecuteFlag)
                     {
-                        appWidowInstant.GetComponent<ApplicationWindow>().AppImage.GetComponent<Image>().color =
+                        appWidowInstant.AppImage.GetComponent<Image>().color =
                             new Color(255f, 255f, 255f, 0f);
                     }
                 }
@@ -72,9 +74,9 @@ namespace Controllers
                     OverAllManager.Instance.SetImageAlpha(i, 255f);
                 }
 
-                foreach (GameObject appWidowInstant in _appWidowInstants)
+                foreach (ApplicationWindow appWidowInstant in _appWidowInstants)
                 {
-                    appWidowInstant.GetComponent<ApplicationWindow>().AppImage.GetComponent<Image>().color =
+                    appWidowInstant.AppImage.GetComponent<Image>().color =
                         new Color(255f, 255f, 255f, 255f);
                 }
             }
@@ -109,11 +111,9 @@ namespace Controllers
             if (_selectedNumber != _previousSelectNumber)
             {
                 //以前選択状態だったものを非選択状態に
-                _appWidowInstants[_previousSelectNumber].GetComponent<ApplicationWindow>()
-                    .State = Enums.State.Unselect;
+                _appWidowInstants[_previousSelectNumber].State = Enums.State.Unselect;
                 //今回選択状態になったものを選択状態に
-                _appWidowInstants[_selectedNumber].GetComponent<ApplicationWindow>()
-                    .State = Enums.State.Select;
+                _appWidowInstants[_selectedNumber].State = Enums.State.Select;
 
                 MoveAppWindow();
 
@@ -125,28 +125,30 @@ namespace Controllers
         {
             if (!_isInit)
             {
-                _appWidowInstants = new List<GameObject>();
+                _appWidowInstants = new List<ApplicationWindow>();
                 _isInit = true;
             }
 
             if (_appWidowInstants.Count == 0) return;
 
-            _appWidowInstants[0].GetComponent<ApplicationWindow>().State = Enums.State.Select;
-            _appWidowInstants[0].GetComponent<ApplicationWindow>().MoveWindow(DefaultPos);
+            _appWidowInstants[0].State = Enums.State.Select;
+            _appWidowInstants[0].MoveWindow(DefaultPos);
 
             _previousSelectNumber = 0;
             _selectedNumber = 0;
 
-            _previousGameCategory =
-                _appWidowInstants[_selectedNumber].GetComponent<ApplicationWindow>().GameCategory;
-            OverAllManager.Instance.SetCategoryIcon(0, OverAllManager.Instance.ExchangeIntFromGameCategory(_previousGameCategory));
+            _previousGameCategory = _appWidowInstants[_selectedNumber].GameCategory;
+            OverAllManager.Instance.SetCategoryIcon(0,
+                OverAllManager.Instance.ExchangeIntFromGameCategory(_previousGameCategory));
 
             for (int i = 1; i < _appWidowInstants.Count; i++)
             {
-                _appWidowInstants[i].GetComponent<ApplicationWindow>().State = Enums.State.Select;
-                _appWidowInstants[i].GetComponent<ApplicationWindow>().State = Enums.State.Unselect;
-                _appWidowInstants[i].GetComponent<ApplicationWindow>().MoveWindow(
-                    DefaultPos + new Vector2(SelectBetweenUnselectRight + UnselectBetweenUnselect * (i - 1), 0f));
+                _appWidowInstants[i].State = Enums.State.Select;
+                _appWidowInstants[i].State = Enums.State.Unselect;
+                _appWidowInstants[i].MoveWindow(DefaultPos +
+                                                new Vector2(
+                                                    SelectBetweenUnselectRight + UnselectBetweenUnselect * (i - 1),
+                                                    0f));
                 //Debug.Log(_appWidowInstants[i].transform.localPosition.x + "=" + DefaultPos.x + "+" +
                 //SelectBetweenUnselectRight + "+" + UnselectBetweenUnselect + "*" + (i - 1));
             }
@@ -159,21 +161,20 @@ namespace Controllers
                 Destroy(_appWidowInstants[i]);
             }
 
-            _appWidowInstants = new List<GameObject>();
+            _appWidowInstants = new List<ApplicationWindow>();
         }
 
         void MoveAppWindow()
         {
             //Debug.Log("SelectNumber:" + _selectedNumber);
             //選択状態のアプリケーションウィンドウポジションを設定
-            _appWidowInstants[_selectedNumber].GetComponent<ApplicationWindow>().MoveWindow(DefaultPos);
+            _appWidowInstants[_selectedNumber].MoveWindow(DefaultPos);
 
             int j = 0;
             for (int i = _selectedNumber - 1; i >= 0; i--)
             {
                 //選択状態パネルの左側
-                _appWidowInstants[i].GetComponent<ApplicationWindow>().MoveWindow(
-                    DefaultPos - new Vector2(UnselectBetweenUnselect * (j + 1), 0f));
+                _appWidowInstants[i].MoveWindow(DefaultPos - new Vector2(UnselectBetweenUnselect * (j + 1), 0f));
                 j++;
                 //Debug.Log(_appWidowInstants[i].transform.localPosition);
             }
@@ -182,14 +183,14 @@ namespace Controllers
             for (int i = _selectedNumber + 1; i < _appWidowInstants.Count; i++)
             {
                 //選択状態パネルの右側
-                _appWidowInstants[i].GetComponent<ApplicationWindow>().MoveWindow(
-                    DefaultPos + new Vector2(SelectBetweenUnselectRight + UnselectBetweenUnselect * j, 0f));
+                _appWidowInstants[i]
+                    .MoveWindow(DefaultPos + new Vector2(SelectBetweenUnselectRight + UnselectBetweenUnselect * j, 0f));
                 //Debug.Log("後半,i=" + i + "LocalPos:" + _appWidowInstants[i].transform.localPosition);
                 j++;
             }
         }
 
-        public GameObject AppWidowInstants
+        public ApplicationWindow AppWidowInstants
         {
             set => _appWidowInstants.Add(value);
         }
@@ -200,7 +201,7 @@ namespace Controllers
         {
             return _appWidowInstants.Count == 0
                 ? ""
-                : " " + _appWidowInstants[_selectedNumber].GetComponent<ApplicationWindow>().GameName;
+                : " " + _appWidowInstants[_selectedNumber].GameName;
         }
 
         public int GetSelectAppNumber()
@@ -212,10 +213,22 @@ namespace Controllers
         {
             //選択中のアプリケーションのイメージファイル名を返す
             if (_appWidowInstants.Count == 0) return "";
-            foreach (GameObject appWidowInstant in _appWidowInstants)
+            foreach (ApplicationWindow appWidowInstant in _appWidowInstants)
             {
-                if (appWidowInstant.GetComponent<ApplicationWindow>().State == Enums.State.Select)
-                    return appWidowInstant.GetComponent<ApplicationWindow>().GameImage;
+                if (appWidowInstant.State == Enums.State.Select)
+                    return appWidowInstant.GameImage;
+            }
+
+            return "";
+        }
+
+        public string GetSelectAppArgFileName()
+        {
+            if (_appWidowInstants.Count == 0) return "";
+            foreach (ApplicationWindow appWidowInstant in _appWidowInstants)
+            {
+                if (appWidowInstant.State == State.Select)
+                    return appWidowInstant.GameImage;
             }
 
             return "";
