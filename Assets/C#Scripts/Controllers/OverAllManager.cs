@@ -272,7 +272,7 @@ namespace Controllers
             foreach (App app in apps)
             {
                 CreateAppWindow(app);
-                Debug.Log("AppName:" + app.GameName);
+//                Debug.Log("AppName:" + app.GameName);
             }
 
             _appWindowsManager.Initialize();
@@ -474,6 +474,7 @@ namespace Controllers
                 Instantiate(_appWindowsPrefabs, _home.transform).GetComponent<ApplicationWindow>();
             instantiateApplication.Initialize(this, app.GameName, app.FileName,
                 app.ImageFileName, app.GameCategory, State.Unselect, app.Argument, app.Information);
+            instantiateApplication.name = $"app({app.GameName})";
             _appWindowsManager.AppWidowInstants = instantiateApplication;
         }
 
@@ -868,6 +869,10 @@ namespace Controllers
                 return;
             }
 
+            if (_setImageFileName == null) _setImageFileName = "";
+            if (_setGameArg == null) _setGameArg = "";
+            if (_setGameInfo == null) _setGameInfo = "";
+
             //ゲームカテゴリをセット
             _setGameCategory = ExchangeGameCategoryFromInt(_gameCategoryDropDownOnEdit.GetComponent<Dropdown>().value);
 
@@ -892,6 +897,10 @@ namespace Controllers
                 Debug.Log(_setFileName + ", " + _setGameTitle);
                 return;
             }
+
+            if (_setImageFileName == null) _setImageFileName = "";
+            if (_setGameArg == null) _setGameArg = "";
+            if (_setGameInfo == null) _setGameInfo = "";
 
             //ゲームカテゴリをセット
             _setGameCategory = ExchangeGameCategoryFromInt(_gameCategoryDropdown.GetComponent<Dropdown>().value);
@@ -976,7 +985,6 @@ namespace Controllers
         {
             if (_openDialogFlag) return;
             _setImageFileName = "";
-            if (_isEdit) _setImageFileName = _appWindowsManager.GetSelectAppImageFileName();
 
             Cursor.visible = true;
 
@@ -1081,7 +1089,7 @@ namespace Controllers
                 Debug.Log("null");
                 _setGameArg = _isEdit ? _appWindowsManager.GetSelectAppImageFileName() : "";
                 argSelectText.text =
-                    _isEdit ? _appWindowsManager.GetSelectAppImageFileName() : "ゲームアイコンのpngファイルを選択してください";
+                    _isEdit ? _appWindowsManager.GetSelectAppImageFileName() : "アプリケーション引数ファイルを選択してください(任意)";
             }
             else
             {
@@ -1090,7 +1098,7 @@ namespace Controllers
                 {
                     _setGameArg = _isEdit ? _appWindowsManager.GetSelectAppImageFileName() : "";
                     argSelectText.text =
-                        _isEdit ? _appWindowsManager.GetSelectAppImageFileName() : "ゲームアイコンのpngファイルを選択してください";
+                        _isEdit ? _appWindowsManager.GetSelectAppImageFileName() : "アプリケーション引数ファイルを選択してください(任意)";
                 }
                 else
                 {

@@ -158,7 +158,7 @@ namespace Controllers
         {
             for (int i = 0; i < _appWidowInstants.Count; i++)
             {
-                Destroy(_appWidowInstants[i]);
+                Destroy(_appWidowInstants[i].gameObject);
             }
 
             _appWidowInstants = new List<ApplicationWindow>();
