@@ -1205,6 +1205,8 @@ namespace Controllers
             _setImageFileName = _appWindowsManager.GetSelectAppImageFileName();
             _setGameTitle = _appWindowsManager.GetSelectAppTitle();
             _setGameCategory = apps[_appWindowsManager.GetSelectAppNumber()].GameCategory;
+            _setGameArg = _appWindowsManager.GetSelectAppArgFileName();
+
             _fileSelectButtonTextOnEdit.GetComponent<Text>().text = _setFileName;
             _imageFileSelectButtonTextOnEdit.GetComponent<Text>().text =
                 _setImageFileName != "" ? _setImageFileName : "ゲームアイコンのpngファイルを選択してください";
@@ -1212,10 +1214,7 @@ namespace Controllers
             //DropDownのやつも元に戻すこと
             _gameCategoryDropDownOnEdit.GetComponent<Dropdown>().value =
                 (int) apps[_appWindowsManager.GetSelectAppNumber()].GameCategory;
-            argFileButtonTextOnEdit.text =
-                _appWindowsManager.GetSelectAppArgFileName() != ""
-                    ? _appWindowsManager.GetSelectAppArgFileName()
-                    : "アプリケーション引数ファイルを選択してください(任意)";
+            argFileButtonTextOnEdit.text = _setGameArg != "" ? _setGameArg : "アプリケーション引数ファイルを選択してください(任意)";
 
             _firstSelectButtonOnEdit.Select();
             _firstSelectButtonOnEdit.OnSelect(null);

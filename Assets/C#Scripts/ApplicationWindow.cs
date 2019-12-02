@@ -147,6 +147,10 @@ public class ApplicationWindow : MonoBehaviour
 
     public Enums.GameCategory GameCategory => _gameCategory;
 
+    public string GameArg => _gameArg;
+
+    public string GameInfo => _gameInfo;
+
     public Vector2 Size => _size;
 
     public Enums.State State

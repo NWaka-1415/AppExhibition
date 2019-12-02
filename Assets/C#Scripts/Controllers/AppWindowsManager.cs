@@ -201,7 +201,7 @@ namespace Controllers
         {
             return _appWidowInstants.Count == 0
                 ? ""
-                : " " + _appWidowInstants[_selectedNumber].GameName;
+                : _appWidowInstants[_selectedNumber].GameName;
         }
 
         public int GetSelectAppNumber()
@@ -228,7 +228,7 @@ namespace Controllers
             foreach (ApplicationWindow appWidowInstant in _appWidowInstants)
             {
                 if (appWidowInstant.State == State.Select)
-                    return appWidowInstant.GameImage;
+                    return appWidowInstant.GameArg;
             }
 
             return "";
