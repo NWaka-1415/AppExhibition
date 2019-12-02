@@ -52,6 +52,13 @@ namespace Controllers
 
         #endregion
 
+        #region FileSetterButtonsOnAdd
+
+        [SerializeField] private Button fileSelectButton = null;
+        [SerializeField] private Button imageFileSelectButton = null;
+        [SerializeField] private Button argFileSelectButton = null;
+
+        #endregion
 
         #region FileSetterButttonsTextOnEdit
 
@@ -67,13 +74,26 @@ namespace Controllers
 
         #endregion
 
+        #region FileSetterButtonsOnEdit
+
+        [SerializeField] private Button fileSelectButtonOnEdit = null;
+        [SerializeField] private Button imageFileSelectButtonOnEdit = null;
+        [SerializeField] private Button argFileSelectButtonOnEdit = null;
+
+        #endregion
+
         #region Buttons
+
+        #region FirstSelectButtons
 
         [SerializeField] private Button _firstSelectButtonOnSetting; //最初に選択されているボタン in Setting
         [SerializeField] private Button _firstSelectButtonOnAdd; //最初に選択されているボタン in Add
         [SerializeField] private Button _firstSelectButtonOnDelete; //最初に選択されているボタン in Delete
         [SerializeField] private Button _firstSelectButtonOnDialog; //最初に選択されているボタン in Dialog
         [SerializeField] private Button _firstSelectButtonOnEdit; //最初に選択されている in Edit
+
+        #endregion
+
         [SerializeField] private Button nextButtonOnWelcome;
         [SerializeField] private InputField firstSelectOnPassSet = null;
         [SerializeField] private InputField firstSelectOnPassCheck = null;
@@ -214,6 +234,13 @@ namespace Controllers
             if (_instance == null) _instance = this;
             else if (_instance != this) Destroy(gameObject);
             Cursor.visible = false;
+
+            #region ButtonOnclick
+
+            argFileSelectButton.onClick.AddListener(OpenArgsFile);
+            argFileSelectButtonOnEdit.onClick.AddListener(OpenArgsFile);
+
+            #endregion
         }
 
         // Use this for initialization
@@ -970,7 +997,18 @@ namespace Controllers
 
             Text imageFileSelectButtonText = _imageFileSelectButtonText.GetComponent<Text>();
             if (_isEdit) imageFileSelectButtonText = _imageFileSelectButtonTextOnEdit.GetComponent<Text>();
-            GameObject.Find("ImageFileSelectButton").GetComponent<Button>().Select();
+
+            //フォーカスを合わせます
+            if (!_isEdit)
+            {
+                imageFileSelectButton.Select();
+                imageFileSelectButton.OnSelect(null);
+            }
+            else
+            {
+                imageFileSelectButtonOnEdit.Select();
+                imageFileSelectButtonOnEdit.OnSelect(null);
+            }
 
             Cursor.visible = false;
 
@@ -1001,7 +1039,7 @@ namespace Controllers
             }
         }
 
-        public void OpenArgsFile()
+        private void OpenArgsFile()
         {
             if (_openDialogFlag) return;
 
@@ -1023,7 +1061,16 @@ namespace Controllers
 
             Text argSelectText = argFileButtonText;
             if (_isEdit) argSelectText = argFileButtonTextOnEdit;
-//            GameObject.Find("ImageFileSelectButton").GetComponent<Button>().Select();
+            if (!_isEdit)
+            {
+                argFileSelectButton.Select();
+                argFileSelectButton.OnSelect(null);
+            }
+            else
+            {
+                argFileSelectButtonOnEdit.Select();
+                argFileSelectButtonOnEdit.OnSelect(null);
+            }
 
             Cursor.visible = false;
 

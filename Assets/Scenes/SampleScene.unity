@@ -2170,7 +2170,7 @@ MonoBehaviour:
   m_Navigation:
     m_Mode: 4
     m_SelectOnUp: {fileID: 973389526}
-    m_SelectOnDown: {fileID: 1292884967}
+    m_SelectOnDown: {fileID: 1652339529}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
@@ -8513,7 +8513,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Navigation:
     m_Mode: 4
-    m_SelectOnUp: {fileID: 345198500}
+    m_SelectOnUp: {fileID: 1652339529}
     m_SelectOnDown: {fileID: 1033712796}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
@@ -10357,8 +10357,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Navigation:
     m_Mode: 4
-    m_SelectOnUp: {fileID: 1033712796}
-    m_SelectOnDown: {fileID: 973389526}
+    m_SelectOnUp: {fileID: 345198500}
+    m_SelectOnDown: {fileID: 1292884967}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
@@ -10542,11 +10542,17 @@ MonoBehaviour:
   _titleNameEnter: {fileID: 44540014}
   _gameCategoryDropdown: {fileID: 1453833781}
   argFileButtonText: {fileID: 1096552810}
+  fileSelectButton: {fileID: 503121073}
+  imageFileSelectButton: {fileID: 1145723885}
+  argFileSelectButton: {fileID: 1096552809}
   _fileSelectButtonTextOnEdit: {fileID: 1033712797}
   _imageFileSelectButtonTextOnEdit: {fileID: 2145246170}
   _titleNameEnterOnEdit: {fileID: 973389525}
   _gameCategoryDropDownOnEdit: {fileID: 345198499}
   argFileButtonTextOnEdit: {fileID: 1652339530}
+  fileSelectButtonOnEdit: {fileID: 1033712796}
+  imageFileSelectButtonOnEdit: {fileID: 763279359}
+  argFileSelectButtonOnEdit: {fileID: 1652339529}
   _firstSelectButtonOnSetting: {fileID: 140818906}
   _firstSelectButtonOnAdd: {fileID: 503121073}
   _firstSelectButtonOnDelete: {fileID: 2026058954}
