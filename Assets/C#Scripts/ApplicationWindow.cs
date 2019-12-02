@@ -22,6 +22,8 @@ public class ApplicationWindow : MonoBehaviour
     private string _exeFileName; //Fileの場所
     private string _gameImage; //ゲームのメインイメージ
     private Enums.GameCategory _gameCategory; //ゲームカテゴリ
+    private string _gameArg;
+    private string _gameInfo;
 
     Process _proc;
 
@@ -68,6 +70,8 @@ public class ApplicationWindow : MonoBehaviour
         _exeFileName = exeFileName;
         _gameImage = imageFileName;
         _gameCategory = gameCategory;
+        _gameArg = gameArg;
+        _gameInfo = gameInfo;
         _state = state;
         _size = transform.localScale;
 
@@ -92,6 +96,7 @@ public class ApplicationWindow : MonoBehaviour
     {
         _proc = new Process();
         _proc.StartInfo.FileName = _exeFileName;
+        if (_gameArg != "") _proc.StartInfo.Arguments = _gameArg;
         _proc.EnableRaisingEvents = true;
     }
 
