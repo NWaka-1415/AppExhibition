@@ -929,7 +929,8 @@ namespace Controllers
 
             ExtensionFilter[] extensionFilters = new[]
             {
-                new ExtensionFilter("exeファイル", "exe")
+                new ExtensionFilter("exeファイル", "exe"),
+                new ExtensionFilter("java実行ファイル", "jar"),
             };
 
             string[] fileNames = StandaloneFileBrowser.OpenFilePanel("Choose exe File", "", extensionFilters, false);
