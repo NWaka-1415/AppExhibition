@@ -2,6 +2,7 @@
 exeアプリケーションをまとめて管理するランチャーのクソコード。<br>
 サークルでの発表時に、1台のPCからでも複数の作品を遊ぶようにするためのランチャーです。PS4のホーム画面を模しました。
 ## 機能・使い方
+バージョンアップに伴い，本READMEの情報は古くなっています。のちに更新する予定ですが，それまでは[AppExhibition操作説明.pdf](https://github.com/NWaka-1415/AppExhibition/blob/master/AppExhibition%E6%93%8D%E4%BD%9C%E8%AA%AC%E6%98%8E.pdf)を参考にしてください。
 <ol>
     <li>アプリケーションの登録
         <br>
